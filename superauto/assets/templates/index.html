@@ -1,0 +1,12 @@
+{% extends "./base.html" %}
+
+{%block main%}
+            {% if assetdetails_list %}
+            {% with post_list=assetdetails_list %}
+            {% for post in post_list %}
+                {% include "./assetdetail.html" %}
+            {% endfor %}
+            {% endwith %}
+            {% endif %}
+
+{% endblock %}
