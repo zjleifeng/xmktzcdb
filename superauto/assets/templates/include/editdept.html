@@ -1,0 +1,35 @@
+{% extends "./base.html" %}
+{% block content %}
+<div class="header">
+
+            <h1 class="page-title">部门管理</h1>
+                    <ul class="breadcrumb">
+            <li><a href="/">首页</a> </li>
+            <li><a href="/dept/">部门管理</a> </li>
+            <li class="active">修改部门信息</li>
+        </ul>
+
+        </div>
+    <div class="main-content">
+
+
+        <form action="" method="post">
+                {% csrf_token %}
+
+                <table>
+                {{ form }}
+                </table>
+
+
+
+
+                <div class="btn-toolbar list-toolbar">
+      <button class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+
+    </div>
+
+
+                <div class="clearfix"></div>
+            </form>
+    </div>
+{% endblock %}

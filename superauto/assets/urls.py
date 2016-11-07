@@ -6,20 +6,32 @@
 # @File    : urls.py
 # @Software: PyCharm
 
-from django.conf.urls import include, url
+from django.conf.urls import *
 from django.contrib import admin
 from assets import views
-from assets.views import IndexView,AssetDetailsView,DeptView,EmployeeUserView
-from assets.views import login,logout
+from assets.views import index,DeptSearchView
+from assets.dept import EditDept_detail
+from django.views.generic.base import RedirectView
+
+
 
 urlpatterns = [
 
-    url(r'^$',IndexView.as_view(), name='index-view'),
-    url(r'^assetdetail/(?P<slug>\w+).html$',
-        AssetDetailsView.as_view(), name='assetdetails-view'),
-    url(r'^dept/$',DeptView.as_view(), name='dept-view'),
-    url(r'^user/$',EmployeeUserView.as_view(), name='user-view'),
-    url(r'^logout/$',logout),
-    url(r'^login/$', login),
+    url(r'^$',index),
+    url(r'^accounts/login/$', 'assets.account.userlogin', name="userlogin"),
+    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout',
+        {'next_page': '/accounts/login/'}, name="userlogout"),
+
+    url(r'^dept/$','assets.dept.DeptView',name='dept-view'),
+    url(r'^adddept/$','assets.dept.AddDept',name='adddept-view'),
+    url(r'^editdept/$','assets.dept.EditDept',name='editdept-view'),
+    url(r'^dept/(\d+)/$', EditDept_detail),
+    url(r'^deldept/(\d+)/$', 'assets.dept.DelDept_detail', name='deldept-view'),
+    url(r'^search/$', DeptSearchView),
+    url(r'^xlwtdept/$', 'assets.upxlwt.dept_xlwt'),
+    url(r'^xlrddept/$', 'assets.upxlwt.dept_xlrd'),
+
+
+
 
 ]

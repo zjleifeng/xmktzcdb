@@ -1,0 +1,130 @@
+{% extends "./base.html" %}
+
+{% block content %}
+<script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/layer.js"></script>
+    <link rel="stylesheet" href="//res.layui.com/layui/build/css/layui.css"  media="all">
+
+        <div class="header">
+
+            <h1 class="page-title">部门管理</h1>
+                    <ul class="breadcrumb">
+            <li><a href="/">首页</a> </li>
+
+            <li class="active">部门管理</li>
+        </ul>
+
+        </div>
+        <div class="main-content">
+
+<div class="btn-toolbar list-toolbar">
+
+ <form  role="form" method="post" action="/search/" style="float: left">
+ {% csrf_token %}
+    <input placeholder="搜索部门" type="text"  class="form-control" id="s" name="word"  style="width:200px;float: left;">
+
+<button class="btn btn-primary" >搜 索</button>
+</form>
+<div style="float: right">
+
+
+    <a href="/adddept/" class="btn btn-primary"><i class="fa fa-plus"></i> 添加新部门</a>
+
+    <a href="/xlrddept/" class="btn btn-default">导入数据</a>
+
+     <button  class="btn btn-default" id="id">Open</button>
+    <input id="openexcelfile" type="file" name="openexcelfile" style="display: none;" />
+
+    <a href="/xlwtdept/" class="btn btn-default">导出数据</a>
+      <input id="yourinputname" type="file" name="yourinputname" value="上传" style="display: none;" />
+    </div>
+  <div class="btn-group">
+  </div>
+</div>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th width="30%">部门</th>
+      <th  width="50%">上级部门</th>
+        <th  width="20%">操作</th>
+
+    </tr>
+  </thead>
+  <tbody>
+  {% if dept_list %}
+      {% for dept in dept_list %}
+           <tr>
+      <td><a href="/dept/{{ dept.id }}"> {{ dept.deptname }}</a></td>
+      <td>{% if not dept.parentdept %}{{ "" }}{% else %}{{ dept.parentdept }}{% endif %}</td>
+
+      <td>
+
+          <a  href="/dept/{{ dept.id }}"><i class="fa fa-pencil"></i></a>
+
+          <a href="#" value="11" role="button" data-toggle="modal" id="parentIframe" onclick="uuuu('/deldept/{{ dept.id }}/')"><i class="fa fa-trash-o"></i></a>
+      </td>
+    </tr>
+      {% endfor %}
+
+
+  {% endif %}
+
+  </tbody>
+
+</table>
+<!--分页 -->
+
+        {% if dept_list %}
+            <div  style="position:absolute;bottom:0px;">
+        {% include 'include/pagination.html' %}
+            </div>
+        {% endif %}
+
+
+<div class="modal small fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">删除部门</h3>
+        </div>
+        <div class="modal-body">
+            <p class="error-text"><i class="fa fa-warning modal-icon"></i>您确定要删除部门{{ dept.id }}<br>删除后无法恢复</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cancel</button>
+            <button class="btn btn-danger" data-dismiss="modal">Delete</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+</div>
+<script LANGUAGE="javascript">
+function openwin(url1) { window.open (url1, "newwindow", "height=100, width=400, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no")
+
+}
+
+$('#id').on('click', function() {
+   $('#openexcelfile').trigger('click');
+});
+
+function update(){
+document.form.action="test.jsp?name=update";
+document.form.submit();
+}
+//弹出一个iframe层
+
+function uuuu(content) {
+    layer.open({
+        type: 2,
+        title: '删除部门',
+        maxmin: true,
+        shadeClose: true, //点击遮罩关闭层
+        area: ['500px', '320px'],
+        content: content
+    });
+}
+</script>
+
+{% endblock %}

@@ -38,7 +38,7 @@ CHANG={
 #部门表
 class Dept(models.Model):
     deptname=models.CharField(max_length=200,verbose_name=u'部门名称')
-    parentdept=models.ForeignKey('self',default=None,blank=True,null=True,verbose_name=u'上级部门')
+    parentdept=models.ForeignKey('self',blank=True,null=True,verbose_name=u'上级部门')
     create_time=models.DateTimeField(auto_now_add=True,verbose_name=u'创建时间')
 
     class Meta:
@@ -70,6 +70,11 @@ class EmployeeUser(models.Model):
 
     __str__ = __unicode__
 
+
+class SiteInfo(models.Model):
+    sitename=models.CharField(max_length=200,verbose_name=u'网站名称')
+    class Meta:
+        verbose_name_plural=u'网站基本信息'
 
 #资产详细信息
 

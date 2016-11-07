@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-#
 from django.contrib import admin
-from assets.models import Dept,EmployeeUser,AssetDetails,UserRecord,AssetInfo,RepairInfo,SupplierInfo
+from assets.models import Dept,EmployeeUser,AssetDetails,UserRecord,AssetInfo,RepairInfo,SupplierInfo,SiteInfo
 from django.utils.text import capfirst
 from django.utils.datastructures import SortedDict
 
@@ -93,5 +93,5 @@ admin.site.register(UserRecord,UserRecordAdmin)
 
 admin.site.register(RepairInfo,RepairInfoAdmin)
 admin.site.register(SupplierInfo,SupplierInfoAdmin)
-
+admin.site.register(SiteInfo)
 
