@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
                 ('wifi_ip', models.GenericIPAddressField(null=True, verbose_name='wifi-IP\u5730\u5740', blank=True)),
                 ('buy_time', models.DateTimeField(null=True, verbose_name='\u8d2d\u4e70\u65e5\u671f', blank=True)),
                 ('create_time', models.DateTimeField(auto_now_add=True, verbose_name='\u521b\u5efa\u65f6\u95f4')),
-                ('itno', models.ForeignKey(verbose_name='\u8d44\u4ea7\u4fe1\u606f', to='assets.AssetDetails')),
+                ('itno', models.ForeignKey(verbose_name='IT\u8d44\u4ea7\u7f16\u53f7', to='assets.AssetDetails')),
             ],
             options={
                 'ordering': ['-create_time'],
@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('deptname', models.CharField(max_length=200, verbose_name='\u90e8\u95e8\u540d\u79f0')),
                 ('create_time', models.DateTimeField(auto_now_add=True, verbose_name='\u521b\u5efa\u65f6\u95f4')),
-                ('parentdept', models.ForeignKey(default=None, blank=True, to='assets.Dept', null=True, verbose_name='\u4e0a\u7ea7\u90e8\u95e8')),
+                ('parentdept', models.ForeignKey(verbose_name='\u4e0a\u7ea7\u90e8\u95e8', blank=True, to='assets.Dept', null=True)),
             ],
             options={
                 'ordering': ['-create_time'],
@@ -73,9 +73,9 @@ class Migration(migrations.Migration):
                 ('engname', models.CharField(max_length=200, verbose_name='\u82f1\u6587\u540d')),
                 ('chnname', models.CharField(max_length=200, verbose_name='\u4e2d\u6587\u540d')),
                 ('extnum', models.IntegerField(verbose_name='\u5206\u673a\u53f7')),
-                ('phonenum', models.IntegerField(null=True, verbose_name='\u624b\u673a\u53f7', blank=True)),
+                ('phonenum', models.BigIntegerField(verbose_name='\u624b\u673a\u53f7')),
                 ('email', models.EmailField(max_length=254, verbose_name='\u90ae\u7bb1\u5730\u5740')),
-                ('entry_time', models.DateTimeField(null=True, verbose_name='\u5165\u804c\u65f6\u95f4', blank=True)),
+                ('entry_time', models.DateTimeField(null=True, verbose_name='\u5165\u804c\u65e5\u671f', blank=True)),
                 ('creare_time', models.DateTimeField(auto_now_add=True, verbose_name='\u521b\u5efa\u65f6\u95f4')),
                 ('dept', models.ForeignKey(verbose_name='\u90e8\u95e8', to='assets.Dept')),
             ],
@@ -95,11 +95,21 @@ class Migration(migrations.Migration):
                 ('whorep', models.CharField(max_length=200, null=True, verbose_name='\u7ef4\u62a4\u4eba\u5458', blank=True)),
                 ('whophone', models.IntegerField(null=True, verbose_name='\u7ef4\u62a4\u4eba\u7535\u8bdd', blank=True)),
                 ('create_time', models.DateTimeField(auto_now_add=True, verbose_name='\u521b\u5efa\u65f6\u95f4')),
-                ('itno', models.ForeignKey(verbose_name='\u8d44\u4ea7\u4fe1\u606f', to='assets.AssetDetails')),
+                ('itno', models.ForeignKey(verbose_name='IT\u8d44\u4ea7\u7f16\u53f7', to='assets.AssetDetails')),
             ],
             options={
                 'ordering': ['create_time'],
                 'verbose_name_plural': '\u8bbe\u5907\u7ef4\u62a4\u8bb0\u5f55',
+            },
+        ),
+        migrations.CreateModel(
+            name='SiteInfo',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('sitename', models.CharField(max_length=200, verbose_name='\u7f51\u7ad9\u540d\u79f0')),
+            ],
+            options={
+                'verbose_name_plural': '\u7f51\u7ad9\u57fa\u672c\u4fe1\u606f',
             },
         ),
         migrations.CreateModel(
@@ -128,7 +138,7 @@ class Migration(migrations.Migration):
                 ('yend_time', models.DateTimeField(auto_now=True, verbose_name='\u9884\u8ba1\u5f52\u8fd8\u65e5\u671f', null=True)),
                 ('send_time', models.DateTimeField(auto_now=True, verbose_name='\u5b9e\u9645\u5f52\u8fd8\u65f6\u95f4', null=True)),
                 ('creare_time', models.DateTimeField(auto_now_add=True, verbose_name='\u521b\u5efa\u65f6\u95f4')),
-                ('itno', models.ForeignKey(verbose_name='\u8d44\u4ea7\u4fe1\u606f', to='assets.AssetDetails')),
+                ('itno', models.ForeignKey(verbose_name='IT\u8d44\u4ea7\u7f16\u53f7', to='assets.AssetDetails')),
                 ('user', models.ForeignKey(verbose_name='\u4f7f\u7528\u8005', blank=True, to='assets.EmployeeUser', null=True)),
             ],
             options={

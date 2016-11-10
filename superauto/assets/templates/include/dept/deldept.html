@@ -35,7 +35,8 @@
         <a style="align-content: center;color: red"> 您确定要删除部门：（{{ deldept_list.deptname }}  ）吗？</a>
     </div>
     <div align="center"style="padding-top: 50px">
-        <button class="layui-btn layui-btn-small layui-btn-radius layui-btn-danger" style=""><i class="fa fa-save"></i> 确定</button>
+        <button onclick="javascript:window.close()" class="layui-btn layui-btn-small layui-btn-radius layui-btn-danger" style=""><i class="fa fa-save"></i> 确定</button>
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cancel</button>
     </div>
 
 
@@ -58,3 +59,4 @@
       </div>
     </div>
 </div>
+

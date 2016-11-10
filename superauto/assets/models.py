@@ -56,9 +56,9 @@ class EmployeeUser(models.Model):
     dept=models.ForeignKey(Dept,verbose_name=u'部门')
     chnname=models.CharField(max_length=200,verbose_name=u'中文名')
     extnum=models.IntegerField(verbose_name=u'分机号')
-    phonenum=models.IntegerField(blank=True,null=True,verbose_name=u'手机号')
+    phonenum=models.BigIntegerField(verbose_name=u'手机号')
     email=models.EmailField(verbose_name=u'邮箱地址')
-    entry_time=models.DateTimeField(blank=True,null=True,verbose_name=u'入职时间')
+    entry_time=models.DateField(blank=True,null=True,verbose_name=u'入职日期')
     creare_time=models.DateTimeField(auto_now_add=True,verbose_name=u'创建时间')
 
     class Meta:

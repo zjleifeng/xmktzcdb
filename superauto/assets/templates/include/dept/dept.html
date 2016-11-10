@@ -11,7 +11,9 @@
                     <ul class="breadcrumb">
             <li><a href="/">首页</a> </li>
 
+
             <li class="active">部门管理</li>
+                        <input class="layui-btn layui-btn-mini" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回上一页">
         </ul>
 
         </div>
@@ -19,7 +21,7 @@
 
 <div class="btn-toolbar list-toolbar">
 
- <form  role="form" method="post" action="/search/" style="float: left">
+ <form  role="form" method="post" action="/deptsearch/" style="float: left">
  {% csrf_token %}
     <input placeholder="搜索部门" type="text"  class="form-control" id="s" name="word"  style="width:200px;float: left;">
 
@@ -30,9 +32,8 @@
 
     <a href="/adddept/" class="btn btn-primary"><i class="fa fa-plus"></i> 添加新部门</a>
 
-    <a href="/xlrddept/" class="btn btn-default">导入数据</a>
+    <a href="/updept/" class="btn btn-default">导入数据</a>
 
-     <button  class="btn btn-default" id="id">Open</button>
     <input id="openexcelfile" type="file" name="openexcelfile" style="display: none;" />
 
     <a href="/xlwtdept/" class="btn btn-default">导出数据</a>
@@ -51,6 +52,7 @@
     </tr>
   </thead>
   <tbody>
+  {% with obj_list as dept_list %}
   {% if dept_list %}
       {% for dept in dept_list %}
            <tr>
@@ -60,7 +62,7 @@
       <td>
 
           <a  href="/dept/{{ dept.id }}"><i class="fa fa-pencil"></i></a>
-
+            <a href="#myModal" role="button" data-toggle="modal"><i class="fa fa-trash-o"></i></a>
           <a href="#" value="11" role="button" data-toggle="modal" id="parentIframe" onclick="uuuu('/deldept/{{ dept.id }}/')"><i class="fa fa-trash-o"></i></a>
       </td>
     </tr>
@@ -68,13 +70,13 @@
 
 
   {% endif %}
-
+{% endwith %}
   </tbody>
 
 </table>
 <!--分页 -->
 
-        {% if dept_list %}
+        {% if obj_list %}
             <div  style="position:absolute;bottom:0px;">
         {% include 'include/pagination.html' %}
             </div>
@@ -88,13 +90,15 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h3 id="myModalLabel">删除部门</h3>
         </div>
+         <form  role="form" method="post" >
         <div class="modal-body">
             <p class="error-text"><i class="fa fa-warning modal-icon"></i>您确定要删除部门{{ dept.id }}<br>删除后无法恢复</p>
         </div>
+
         <div class="modal-footer">
             <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cancel</button>
             <button class="btn btn-danger" data-dismiss="modal">Delete</button>
-        </div>
+        </div></form>
       </div>
     </div>
 </div>
@@ -105,9 +109,7 @@ function openwin(url1) { window.open (url1, "newwindow", "height=100, width=400,
 
 }
 
-$('#id').on('click', function() {
-   $('#openexcelfile').trigger('click');
-});
+
 
 function update(){
 document.form.action="test.jsp?name=update";

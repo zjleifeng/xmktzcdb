@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'superauto.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'superauto',                      # Or path to database file if using sqlite3.
+        'NAME': 'superauto1',                      # Or path to database file if using sqlite3.
         'USER': 'root',                      # Not used with sqlite3.
         'PASSWORD': 'zjhan',                  # Not used with sqlite3.
         'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -117,7 +117,8 @@ DATE_FORMAT = 'Y-m-d'
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
-
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 
 
@@ -144,4 +145,4 @@ SUIT_CONFIG = {
 WEBSITE_TITLE = u'XMKT资产管理系统'
 WEBSITE_WELCOME = u'XMKT Manager'
 
-PAGE_NUM=5
+PAGE_NUM=10

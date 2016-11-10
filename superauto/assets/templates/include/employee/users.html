@@ -1,0 +1,164 @@
+{% extends "./base.html" %}
+
+{% block content %}
+<script type="text/javascript" src="/static/js/wmadmin.js"></script>
+        <div class="header">
+
+            <h1 class="page-title">员工管理</h1>
+                    <ul class="breadcrumb">
+            <li><a href="/">首页</a> </li>
+
+
+            <li class="active">员工管理</li>
+                        <input class="layui-btn layui-btn-mini" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回上一页">
+        </ul>
+
+        </div>
+        <div class="main-content">
+
+<div class="btn-toolbar list-toolbar">
+
+ <form  role="form" method="post" action="/usersearch/" style="float: left">
+ {% csrf_token %}
+    <input placeholder="搜索员工" type="text"  class="form-control" id="s" name="word"  style="width:200px;float: left;">
+
+<button class="btn btn-primary" >搜 索</button>
+     {% if count %}
+     一共搜索到 <a style="color: red">{{ count }}</a> 条记录 |  {% endif %}共<a style="color: red"> {{ allcount }} </a>条
+
+</form>
+<div style="float: right">
+
+
+    <a href="/adduser/" class="btn btn-primary"><i class="fa fa-plus"></i> 添加新员工</a>
+
+    <a href="/upuser/" class="btn btn-default">导入数据</a>
+
+    <input id="openexcelfile" type="file" name="openexcelfile" style="display: none;" />
+
+    <a href="/loaduser/" class="btn btn-default">导出数据</a>
+      <input id="yourinputname" type="file" name="yourinputname" value="上传" style="display: none;" />
+    </div>
+  <div class="btn-group">
+  </div>
+</div>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th width="10%">英文名</th>
+      <th width="10%">中文名</th>
+        <th width="10%">分机号</th>
+        <th width="10%">部门</th>
+         <th width="20%">邮箱</th>
+         <th width="10%">手机</th>
+         <th width="20%">入职时间</th>
+         <th>操作</th>
+
+    </tr>
+  </thead>
+  <tbody>
+  {% with obj_list as users_list %}
+
+  {% if users_list %}
+      {% for users in users_list %}
+           <tr>
+      <td><a href="/users/{{ users.id }}"> {{ users.engname }}</a></td>
+      <td><a href="/users/{{ users.id }}"> {{ users.chnname }}</a></td>
+      <td> {{ users.extnum }}</td>
+      <td> {{ users.dept }}</td>
+      <td> {{ users.email }}</td>
+      <td>{% if not users.phonenum %}{{ "" }}{% else %} {{ users.phonenum }}{% endif %}</td>
+      <td>{% if not users.entry_time %}{{ "" }}{% else %}{{ users.entry_time }}{% endif %}</td>
+
+
+      <td>
+          <a style="float: left"  href="/users/{{ users.id }}"><i class="fa fa-pencil"></i></a>
+
+    <form id="del_user" action='/deluser/{{ users.id }}/' method='post' onclick="return get_lastmonth()">
+     {% csrf_token %}
+
+<input type='hidden' id='test' name='test'>
+<a style="padding-left: 20px" href="#" type="checkbox"class="fa fa-trash-o"></a>
+<span style="display:none" id='lastmonth'>{{ users.chnname }}</span>
+</form>
+
+
+
+      </td>
+    </tr>
+      {% endfor %}
+
+
+  {% endif %}
+{% endwith %}
+  </tbody>
+
+</table>
+
+
+<script>
+function get_lastmonth()
+{
+    var getabc = document.getElementById("lastmonth").innerHTML;
+
+    layer.confirm('确认删除员工：（'+getabc+"）    吗？", {icon: 3, title:'提示:删除后不可恢复！'}, function(index){
+  //do something
+  $("#del_user").submit();
+  layer.close(index);
+});
+
+
+
+
+
+}
+</script>
+
+<!--分页 -->
+
+        {% if obj_list %}
+            <div  style="position:absolute;bottom:0px;">
+        {% include 'include/pagination.html' %}
+            </div>
+        {% endif %}
+
+{% include 'include/employee/deluser.html' %}
+
+
+</div>
+
+<script LANGUAGE="javascript">
+function openwin(url1) { window.open (url1, "newwindow", "height=100, width=400, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no")
+
+}
+
+
+//eg1
+function delcon(content) {
+
+    layer.confirm('是否确定删除该员工?', {icon: 3, title: '提示！'}, function (index) {
+        //do something
+
+        layer.close(index);
+        location.href=content
+
+
+
+    });
+}
+//弹出一个iframe层
+
+function delframe(content) {
+    layer.open({
+        type: 2,
+        title: '删除员工',
+        maxmin: true,
+        shadeClose: true, //点击遮罩关闭层
+        area: ['500px', '320px'],
+        closeBtn: 1,
+        content: content
+    });
+}
+</script>
+
+{% endblock %}

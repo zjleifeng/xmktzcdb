@@ -18,10 +18,9 @@ from django.core.exceptions import PermissionDenied
 
 @login_required
 def DeptView(request):
-    username=request.user.username
     paginate_by = settings.PAGE_NUM
-    dept_list=Dept.objects.all()
-    paginator = Paginator(dept_list, 10)
+    dept_list=Dept.objects.all().order_by('id')
+    paginator = Paginator(dept_list, paginate_by)
     page = request.GET.get('page')
     try:
         dept_list = paginator.page(page)  # 返回用户请求的页码对象
@@ -31,7 +30,7 @@ def DeptView(request):
         # 如果请求的页码数超出paginator.page_range(),则返回paginator页码对象的最后一页
         dept_list = paginator.page(paginator.num_pages)
 
-    return render(request, 'include/dept.html', {'dept_list': dept_list})
+    return render(request, 'include/dept/dept.html', {'obj_list': dept_list})
 
     #return render_to_response('include/dept.html', locals())
 
@@ -41,7 +40,7 @@ def DeptView(request):
 def AddDept(request):
     if request.method=='GET':
         form=AddDeptForm
-        return render_to_response('include/adddept.html', RequestContext(request, {'form': form, }))
+        return render_to_response('include/dept/adddept.html', RequestContext(request, {'form': form, }))
     else:
         form=AddDeptForm(request.POST)
         if form.is_valid():
@@ -50,10 +49,10 @@ def AddDept(request):
             return HttpResponseRedirect('/dept/')
         else:
             form = AddDeptForm()
-        return render(request, 'include/adddept.html', {'form': form})
+            return render(request, 'include/dept/adddept.html', {'form': form})
 
 
-
+"""
 @login_required
 def EditDept(request):
 
@@ -68,8 +67,8 @@ def EditDept(request):
             return HttpResponseRedirect('/dept/')
         else:
             form=AddDeptForm()
-        return render(request, 'include/editdept.html', {'form': form})
-
+        return render(request, 'include/dept/editdept.html', {'form': form})
+"""
 @login_required
 def EditDept_detail(request,dept_id):
 
@@ -82,17 +81,17 @@ def EditDept_detail(request,dept_id):
             return HttpResponseRedirect('/dept/')
     else:
         form=AddDeptForm(instance=dept_obj)
-    return render(request, 'include/editdept.html', {'form': form})
+        return render(request, 'include/dept/editdept.html', {'form': form})
 
 @login_required
 def DelDept_detail(request,dept_id):
-    deldept_list=Dept.objects.get(id=dept_id)
-    if request.method=='POST':
-        try:
-            dept_obj = Dept.objects.get(id=dept_id)
-            dept_obj.delete()
+    try:
+        deldept_list=Dept.objects.get(id=dept_id)
+        if request.method=='POST':
+            deldept_list.delete()
             return HttpResponseRedirect('/dept/')
-        except Dept.DoesNotExist:
-            raise PermissionDenied
+        else:
+            return render(request, 'include/dept/deldept.html', {'deldept_list':deldept_list})
 
-    return render(request, 'include/deldept.html',{'deldept_list':deldept_list})
+    except Dept.DoesNotExist:
+        raise PermissionDenied

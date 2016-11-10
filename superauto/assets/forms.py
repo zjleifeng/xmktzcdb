@@ -10,9 +10,12 @@ from django import forms
 from fields import UsernameField,PasswordField
 from django.contrib.auth import authenticate,login
 from django.forms import ModelForm
-from assets.models import Dept
+from assets.models import Dept,EmployeeUser
 from django.contrib.auth.models import User
 from bootstrap_toolkit.widgets import BootstrapDateInput,BootstrapTextInput,BootstrapUneditableInput
+
+from django.contrib.admin import widgets
+
 
 """
 class LoginForm(forms.Form):
@@ -100,3 +103,27 @@ class DeptModelForm(ModelForm):
     class Meta:
         model=Dept
         exclude=()
+
+
+class UpdeptForm(forms.Form):
+    deptform = forms.FileField(required=True,error_messages={
+        'required':u'必须选择一个导入文件',
+        'invalid':u'上传文件是以xls结尾的excel'})
+
+
+class AddUserForm(ModelForm):
+    """
+    def __init__(self, *args, **kwarg):
+        super(AddUserForm, self).__init__(*args,**kwarg)
+        self.fields['entry_time']=forms.DateField(widget=widgets.AdminDateWidget(), label=u'入职日期')
+"""
+    #entry_time = forms.DateField(widget=widgets.AdminDateWidget(), label=u'入职日期')
+    class Meta:
+        model=EmployeeUser
+        fields=('engname','chnname','extnum','phonenum','email','entry_time','dept')
+        widgets={
+            #'entry_time':widgets.AdminDateWidget()
+            "entry_time":forms.TextInput(attrs={"class":"laydate-icon","onclick":"laydate()"})
+        }
+    #def clean_entry_time(self):
+        #entry_time=forms.DateField(widget=widgets.AdminDateWidget(), label=u'入职日期')

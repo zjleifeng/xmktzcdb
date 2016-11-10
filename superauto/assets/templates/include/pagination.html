@@ -2,7 +2,7 @@
 
 <nav id="pc_pagination" class="text-center">
 <ul class="pagination">
-{% with dept_list as page_obj %}
+{% with obj_list as page_obj %}
     {% if page_obj.has_previous %}
         <li><a href="?page={{ page_obj.previous_page_number }}{{ getvars }}{{ hashtag }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
     {% else %}

@@ -32,9 +32,10 @@ def index(request):
 @login_required
 def DeptSearchView(request):
     #if request.method=='POST':
+        paginate_by = settings.PAGE_NUM
         S=request.POST.get('word','')
         dept_list=Dept.objects.filter(deptname__contains=S)
-        paginator = Paginator(dept_list, 10)
+        paginator = Paginator(dept_list, paginate_by)
         page = request.GET.get('page')
         try:
             dept_list = paginator.page(page)  # 返回用户请求的页码对象
@@ -43,8 +44,21 @@ def DeptSearchView(request):
         except EmptyPage:
         # 如果请求的页码数超出paginator.page_range(),则返回paginator页码对象的最后一页
             dept_list = paginator.page(paginator.num_pages)
-        return render(request, 'include/dept.html', {'dept_list': dept_list})
+        return render(request, 'include/dept/dept.html', {'obj_list': dept_list})
 
+
+
+
+@login_required
+def syscolor(request):
+    username = request.user.username
+    return render_to_response('include/sys-colors.html', {'username': username})
+
+
+@login_required
+def updept(request):
+    username = request.user.username
+    return render_to_response('include/dept/updept.html', {'username': username})
 
 
 """

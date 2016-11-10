@@ -10,6 +10,7 @@
 from django.http import HttpResponse,HttpResponseRedirect
 from xlwt import *
 from assets.models import Dept
+from django.contrib.auth.decorators import login_required
 import os,re
 import StringIO
 import os
@@ -20,10 +21,85 @@ django.setup()
 import xlrd
 import tkFileDialog
 
+from assets.forms import UpdeptForm
+from superauto import settings
+from time import strftime,localtime
+from xlrd import open_workbook,cellname
+import traceback
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+
+
+@login_required
+def deptup(request):
+    username=request.user.username
+    if request.POST:
+        form=UpdeptForm(request.POST,request.FILES)
+        if form.is_valid():
+            try:
+                xlsfiles=request.FILES.get('deptform','')
+                filename=xlsfiles.name
+                #创建文件存储路径
+                fname = os.path.join(settings.MEDIA_ROOT, 'uploads/dept/%s' % strftime("%Y/%m/%d", localtime()),
+                                     filename)
+                if os.path.exists(fname):
+                    os.remove(fname)
+                dirs = os.path.dirname(fname)
+                if not os.path.exists(dirs):
+                    os.makedirs(dirs)
+                #写入文件
+                if os.path.isfile(fname):
+                    os.remove(fname)
+                content=xlsfiles.read()
+                fp=open(fname,'wb')
+                fp.write(content)
+                fp.close()
+
+
+                #格式化数据保存到数据库
+                book = xlrd.open_workbook(fname)
+                sheet = book.sheet_by_index(0)  # 获取工作表
+                for row_index in range(1,sheet.nrows):
+                    record = sheet.row_values(row_index, 0)
+                    try:
+                        pd=record[2].strip()
+                        if pd:
+                            parentid = Dept.objects.get(deptname=pd)
+                            dept = Dept(deptname=str(record[1].rstrip(".0")), parentdept=parentid)
+                        else:
+                            dept = Dept(deptname=str(record[1]).rstrip(".0"))
+                        dept.save()
+                    except Dept.DoesNotExist, e:
+                        traceback.print_stack()
+                        traceback.print_exc()
+                        print e
+                successinfo = "上传"
+                success = True
+                return render_to_response('include/dept/updept.html', {
+                    "title": '导入部门',
+                    'form': form,
+                    'successinfo': successinfo,
+                    'success': success,
+                    'username': username}, context_instance=RequestContext(request))
+            except Exception, e:
+                traceback.print_stack()
+                traceback.print_exc()
+                print e
+        else:
+            return render_to_response('include/dept/updept.html', {
+                "title": '导入部门',
+                'form': form,
+                'username': username}, context_instance=RequestContext(request))
+    #return render_to_response('include/dept/updept.html', {
+               # "title": '导入部门',
+              #  'username': username}, context_instance=RequestContext(request))
+
+
+    return render_to_response('include/dept/updept.html', RequestContext(request))
 
 
 
-
+@login_required
 def dept_xlrd(request):
 
     xlsfile = r'D:\xls\cs.xls'
@@ -57,6 +133,8 @@ def dept_xlrd(request):
         return HttpResponse('数据格式错误:请检查ID是否与数据库重复')
     return HttpResponse('导入数据成功')
 
+
+@login_required
 def dept_xlwt(request):
     list_obj=Dept.objects.all().order_by('id')
     style_heading = easyxf("""
