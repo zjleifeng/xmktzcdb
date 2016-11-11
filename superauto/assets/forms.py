@@ -105,10 +105,15 @@ class DeptModelForm(ModelForm):
         exclude=()
 
 
-class UpdeptForm(forms.Form):
-    deptform = forms.FileField(required=True,error_messages={
+class UpForm(forms.Form):
+    upform = forms.FileField(required=True,error_messages={
         'required':u'必须选择一个导入文件',
         'invalid':u'上传文件是以xls结尾的excel'})
+
+class UpUserForm(forms.Form):
+    userform=forms.FileField(required=True,error_messages={
+        'required': u'必须选择一个导入文件',
+        'invalid': u'上传文件是以xls结尾的excel'})
 
 
 class AddUserForm(ModelForm):
@@ -120,7 +125,7 @@ class AddUserForm(ModelForm):
     #entry_time = forms.DateField(widget=widgets.AdminDateWidget(), label=u'入职日期')
     class Meta:
         model=EmployeeUser
-        fields=('engname','chnname','extnum','phonenum','email','entry_time','dept')
+        fields=('engname','chnname','extnum','phonenum','email','status','entry_time','dept')
         widgets={
             #'entry_time':widgets.AdminDateWidget()
             "entry_time":forms.TextInput(attrs={"class":"laydate-icon","onclick":"laydate()"})

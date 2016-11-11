@@ -45,9 +45,9 @@ class EmployeeUserAdmin(admin.ModelAdmin):
     # 添加搜索框
     search_fields = ('engname',)
     # 管理列表显示数据字段
-    list_display = ('engname','dept', 'chnname','extnum','email','phonenum','entry_time')
+    list_display = ('engname','dept', 'chnname','extnum','email','phonenum','entry_time','status')
     # 添加过滤器，以下面字段进行过滤
-    list_filter = ('engname', 'dept')
+    list_filter = ('engname', 'dept','status')
     # 新建面板中可以被编辑的字段
     # fields = ('content','user','ip','create_time','update_time','click_count','is_top')
 

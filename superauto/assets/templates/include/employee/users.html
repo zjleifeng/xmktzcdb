@@ -1,4 +1,5 @@
 {% extends "./base.html" %}
+{% url 'loaduser-view' as loaduser_url %}
 
 {% block content %}
 <script type="text/javascript" src="/static/js/wmadmin.js"></script>
@@ -36,7 +37,7 @@
 
     <input id="openexcelfile" type="file" name="openexcelfile" style="display: none;" />
 
-    <a href="/loaduser/" class="btn btn-default">导出数据</a>
+    <a href="{% url 'loaduser-view' %}" class="btn btn-default">导出数据</a>
       <input id="yourinputname" type="file" name="yourinputname" value="上传" style="display: none;" />
     </div>
   <div class="btn-group">
@@ -51,7 +52,8 @@
         <th width="10%">部门</th>
          <th width="20%">邮箱</th>
          <th width="10%">手机</th>
-         <th width="20%">入职时间</th>
+        <th width="10%">状态</th>
+         <th width="10%">入职时间</th>
          <th>操作</th>
 
     </tr>
@@ -68,18 +70,19 @@
       <td> {{ users.dept }}</td>
       <td> {{ users.email }}</td>
       <td>{% if not users.phonenum %}{{ "" }}{% else %} {{ users.phonenum }}{% endif %}</td>
+      <td> {{ users.get_status_display }}</td>
       <td>{% if not users.entry_time %}{{ "" }}{% else %}{{ users.entry_time }}{% endif %}</td>
 
 
       <td>
           <a style="float: left"  href="/users/{{ users.id }}"><i class="fa fa-pencil"></i></a>
 
-    <form id="del_user" action='/deluser/{{ users.id }}/' method='post' onclick="return get_lastmonth()">
+    <form id="del_user" action='/deluser/{{ users.id }}/' method='post' onclick="return del_userjs()">
      {% csrf_token %}
 
 <input type='hidden' id='test' name='test'>
 <a style="padding-left: 20px" href="#" type="checkbox"class="fa fa-trash-o"></a>
-<span style="display:none" id='lastmonth'>{{ users.chnname }}</span>
+<span style="display:none" id='userid'>{{ users.chnname }}</span>
 </form>
 
 
@@ -96,12 +99,15 @@
 </table>
 
 
-<script>
-function get_lastmonth()
-{
-    var getabc = document.getElementById("lastmonth").innerHTML;
 
-    layer.confirm('确认删除员工：（'+getabc+"）    吗？", {icon: 3, title:'提示:删除后不可恢复！'}, function(index){
+
+
+<script>
+function del_userjs()
+{
+    var getid = document.getElementById("userid").innerHTML;
+
+    layer.confirm('确认删除员工：（'+getid+"）    吗？", {icon: 3, title:'提示:删除后不可恢复！'}, function(index){
   //do something
   $("#del_user").submit();
   layer.close(index);
@@ -122,43 +128,9 @@ function get_lastmonth()
             </div>
         {% endif %}
 
-{% include 'include/employee/deluser.html' %}
+
 
 
 </div>
-
-<script LANGUAGE="javascript">
-function openwin(url1) { window.open (url1, "newwindow", "height=100, width=400, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no")
-
-}
-
-
-//eg1
-function delcon(content) {
-
-    layer.confirm('是否确定删除该员工?', {icon: 3, title: '提示！'}, function (index) {
-        //do something
-
-        layer.close(index);
-        location.href=content
-
-
-
-    });
-}
-//弹出一个iframe层
-
-function delframe(content) {
-    layer.open({
-        type: 2,
-        title: '删除员工',
-        maxmin: true,
-        shadeClose: true, //点击遮罩关闭层
-        area: ['500px', '320px'],
-        closeBtn: 1,
-        content: content
-    });
-}
-</script>
 
 {% endblock %}

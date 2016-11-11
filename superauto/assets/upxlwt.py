@@ -11,20 +11,16 @@ from django.http import HttpResponse,HttpResponseRedirect
 from xlwt import *
 from assets.models import Dept
 from django.contrib.auth.decorators import login_required
-import os,re
 import StringIO
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "www.settings")
 import django
-
 django.setup()
 import xlrd
-import tkFileDialog
-
-from assets.forms import UpdeptForm
+from assets.forms import UpForm
 from superauto import settings
 from time import strftime,localtime
-from xlrd import open_workbook,cellname
+
 import traceback
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -34,10 +30,10 @@ from django.template import RequestContext
 def deptup(request):
     username=request.user.username
     if request.POST:
-        form=UpdeptForm(request.POST,request.FILES)
+        form=UpForm(request.POST,request.FILES)
         if form.is_valid():
             try:
-                xlsfiles=request.FILES.get('deptform','')
+                xlsfiles=request.FILES.get('upform','')
                 filename=xlsfiles.name
                 #创建文件存储路径
                 fname = os.path.join(settings.MEDIA_ROOT, 'uploads/dept/%s' % strftime("%Y/%m/%d", localtime()),
@@ -73,7 +69,7 @@ def deptup(request):
                         traceback.print_stack()
                         traceback.print_exc()
                         print e
-                successinfo = "上传"
+                successinfo = "上传/导入数据"
                 success = True
                 return render_to_response('include/dept/updept.html', {
                     "title": '导入部门',

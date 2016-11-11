@@ -12,10 +12,10 @@
     <li data-popover="true" data-content="部门员工信息管理 <strong><a href='#' target='blank'>item</a><strong>." rel="popover" data-placement="right"><a href="#" data-target=".premium-menu" class="nav-header collapsed" data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 部门 员工管理<i class="fa fa-collapse"></i></a></li>
         <li><ul class="premium-menu nav nav-list collapse in">
                 <li class="visible-xs visible-sm"><a href="#">- Premium features require a license -</a></li>
-            <li ><a href="/dept/"><span class="fa fa-caret-right"></span> 部门管理</a></li>
-            <li ><a href="/updept/"><span class="fa fa-caret-right"></span> 上传部门信息</a></li>
-            <li ><a href="/users/"><span class="fa fa-caret-right"></span> 员工管理</a></li>
-            <li ><a href="#"><span class="fa fa-caret-right"></span> Pricing Tables</a></li>
+            <li ><a href="{% url 'dept-view' %}"><span class="fa fa-caret-right"></span> 部门管理</a></li>
+            <li ><a href="{% url 'updept-view' %}"><span class="fa fa-caret-right"></span> 上传部门信息</a></li>
+            <li ><a href="{% url 'users-view' %}"><span class="fa fa-caret-right"></span> 员工管理</a></li>
+            <li ><a href="{% url 'upuser-view' %}"><span class="fa fa-caret-right"></span> 上传员工信息</a></li>
             <li ><a href="#"><span class="fa fa-caret-right"></span> Upgrade Account</a></li>
             <li ><a href="#"><span class="fa fa-caret-right"></span> Widgets</a></li>
             <li ><a href="#"><span class="fa fa-caret-right"></span> Activity Timeline</a></li>

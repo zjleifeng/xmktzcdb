@@ -27,6 +27,12 @@ STATUS={
     1: u'使用中',
 }
 
+USERSTATUS={
+    0:u'在职',
+    1:u'离职',
+    2:u'休假',
+}
+
 CHANG={
     0:u'正常领用',
     1:u'短期借用',
@@ -59,6 +65,7 @@ class EmployeeUser(models.Model):
     phonenum=models.BigIntegerField(verbose_name=u'手机号')
     email=models.EmailField(verbose_name=u'邮箱地址')
     entry_time=models.DateField(blank=True,null=True,verbose_name=u'入职日期')
+    status=models.IntegerField(default=0,choices=USERSTATUS.items(),verbose_name=u'状态')
     creare_time=models.DateTimeField(auto_now_add=True,verbose_name=u'创建时间')
 
     class Meta:

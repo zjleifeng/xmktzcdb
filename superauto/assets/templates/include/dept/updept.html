@@ -21,10 +21,10 @@
 
                     </div>
    <div style="color: red">
-       {% if form.deptform.errors %}
+       {% if form.upform.errors %}
                     <div class="error" style="padding-top: 50px" >
-                        {% if form.deptform.errors %}
-                            {{ form.deptform.errors }}
+                        {% if form.upform.errors %}
+                            {{ form.upform.errors }}
                         {% endif %}
                     </div>
                 {% endif %}
@@ -38,14 +38,14 @@
     <br>
     <div id="myTabContent" class="tab-content">
       <div class="tab-pane active in" id="home">
-          <form id="importdept" method="post" enctype="multipart/form-data" class="mws-form" action="/updept/">
+          <form id="importup" method="post" enctype="multipart/form-data" class="mws-form" action="/updept/">
  {% csrf_token %}
               <div >
-                                        <input type="file" name="deptform" id='deptform' {% if form.deptform.errors %} class="error" {% endif %}/>
+                                        <input type="file" name="upform" id='upform' {% if form.upform.errors %} class="error" {% endif %}/>
                                         <label for="picture" class="error" generated="true" style="display:none"></label>
                                         <div class="error-messages">
-                                            {% if form.deptform.errors %}
-                                                <label for="deptform" generated="true" class="error" style="">{{form.deptform.errors}}</label>
+                                            {% if form.upform.errors %}
+                                                <label for="upform" generated="true" class="error" style="">{{form.upform.errors}}</label>
                                             {% endif %}
                                         </div>
                                     </div>
@@ -75,18 +75,18 @@
    </div>
                 <!-- Panels End -->
     <script>
- $('#importdept').validate({
+ $('#importup').validate({
                 errorPlacement:function(label,elem){
                     elem.closest('.mws-form-row').find('.error-messages').append(label);
                 },
                 rules:{
-                    deptform:{
+                    upform:{
                         required:true,
                         accept:"xls",
                     },
                 },
                 messages:{
-                    deptform:{
+                    upform:{
                         required:"必须选择成绩单",
                         accept:"成绩单为以xls结尾的excel",
                     },

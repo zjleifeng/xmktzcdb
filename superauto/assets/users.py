@@ -17,7 +17,16 @@ from django.http import HttpResponseRedirect,HttpResponse
 from assets.models import EmployeeUser
 from django.core.exceptions import PermissionDenied
 from forms import AddUserForm
-
+from assets.models import Dept
+from xlwt import *
+import StringIO
+from assets.forms import UpForm
+import os
+from time import strftime,localtime
+import xlrd
+import traceback
+import time
+import datetime
 
 
 @login_required
@@ -106,4 +115,221 @@ def UpUser(request):
 
 @login_required
 def LoadUser(request):
-    pass
+
+        obj_list=EmployeeUser.objects.all().order_by('id')
+        style_heading = easyxf("""
+                    font:
+                        name SimSun,
+                        colour_index black,
+                        bold on,
+                        height 300;
+                    align:
+                        wrap off,
+                        vert center,
+                        horiz center;
+
+                    pattern:
+                        pattern solid,
+                        fore-colour 0x34;
+                    borders:
+                        left THIN,
+                        right THIN,
+                        top THIN,
+                        bottom THIN;
+                        """
+                               )
+        style_body = easyxf("""
+                    font:
+                        name Arial,
+                        bold off,
+                        height 250;
+                    align:
+                        wrap on,
+                        vert center,
+                        horiz left;
+                    borders:
+                        left THIN,
+                        right THIN,
+                        top THIN,
+                        bottom THIN;
+                    """
+                            )
+        style_green = easyxf(" pattern: pattern solid,fore-colour 0x11;")
+        style_red = easyxf(" pattern: pattern solid,fore-colour 0x0A;")
+        fmts = [
+            'M/D/YY',
+            'D-MMM-YY',
+            'D-MMM',
+            'MMM-YY',
+            'h:mm AM/PM',
+            'h:mm:ss AM/PM',
+            'h:mm',
+            'h:mm:ss',
+            'M/D/YY h:mm',
+            'mm:ss',
+            '[h]:mm:ss',
+            'mm:ss.0',
+        ]
+        style = XFStyle()
+        style.num_format_str = 'M/D/YY'
+        if obj_list:
+            ws=Workbook(encoding='utf-8')
+            sheet=ws.add_sheet(u'员工表',cell_overwrite_ok=True)
+
+            col_1 = sheet.col(0)  # xlwt中是行和列都是从0开始计算的
+            col_2 = sheet.col(1)
+            col_3 = sheet.col(2)
+            col_4 = sheet.col(3)
+            col_5 = sheet.col(4)
+            col_6 = sheet.col(5)
+            col_7 = sheet.col(6)
+            col_8 = sheet.col(7)
+
+            col_1.width = 256 * 20
+            col_2.width = 256 * 20
+            col_3.width = 256 * 20
+            col_4.width = 256 * 20
+            col_5.width = 256 * 40
+            col_6.width = 256 * 20
+            col_7.width = 256 * 20
+            col_8.width = 256 * 20
+
+
+
+            sheet.write(0, 0, u'英文名',style_heading)
+            sheet.write(0, 1, u'中文名',style_heading)
+            sheet.write(0, 2, u'分机号',style_heading)
+            sheet.write(0, 3, u'部门',style_heading)
+            sheet.write(0, 4, u'邮箱',style_heading)
+            sheet.write(0, 5, u'手机',style_heading)
+            sheet.write(0, 6, u'状态',style_heading)
+            sheet.write(0, 7, u'入职时间',style_heading)
+
+            #写入数据
+            excel_row=1
+            for obj in obj_list:
+                engname=obj.engname
+                chnname=obj.chnname
+                extnum=(obj.extnum)
+                dept=obj.dept.deptname
+                email=obj.email
+                phonenum=str(obj.phonenum)
+                status=obj.get_status_display()
+                if not obj.entry_time:
+                    entry_time=" "
+                else:
+
+                    entry_time=obj.entry_time.strftime("%Y-%m-%d")
+                    #xx=entry_time.strftime("%Y-%m-%d");
+                    #xx=time.strptime("%Y/%m/%d", entry_time)
+
+
+
+                sheet.write(excel_row, 0, engname,style_body)
+                sheet.write(excel_row, 1, chnname, style_body)
+                sheet.write(excel_row, 2, extnum, style_body)
+                sheet.write(excel_row, 3, dept, style_body)
+                sheet.write(excel_row, 4, email, style_body)
+                sheet.write(excel_row, 5, phonenum, style_body)
+                sheet.write(excel_row, 6, status, style_body)
+                sheet.write(excel_row, 7, entry_time,style_body)
+                excel_row += 1
+
+            fname='usersfile.xls'
+            agent = request.META.get('HTTP_USER_AGENT')
+            output=StringIO.StringIO()
+            ws.save(output)
+            output.seek(0)
+            response = HttpResponse(output.getvalue(), content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=%s' % fname
+            response.write(output.getvalue())
+            return response
+
+
+@login_required
+def UpUser(request):
+    username = request.user.username
+    if request.method=='POST':
+        form = UpForm(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                xlsfiles = request.FILES.get('upform', '')
+                filename = xlsfiles.name
+                # 创建文件存储路径
+                fname=os.path.join(settings.MEDIA_ROOT, 'uploads/users/%s' % strftime("%Y/%m/%d", localtime()),filename)
+                if os.path.exists(fname):
+                    os.remove(fname)
+                dirs = os.path.dirname(fname)
+                if not os.path.exists(dirs):
+                    os.makedirs(dirs)
+                # 写入文件
+                if os.path.isfile(fname):
+                    os.remove(fname)
+                content = xlsfiles.read()
+                fp = open(fname, 'wb')
+                fp.write(content)
+                fp.close()
+
+                # 格式化数据保存到数据库
+                book = xlrd.open_workbook(fname)
+                sheet = book.sheet_by_index(0)
+                for row_index in range(1,sheet.nrows):
+                    record = sheet.row_values(row_index, 0)
+                    try:
+                        engname = record[0].strip()
+                        chnname = record[1].strip()
+                        extnum = str(record[2]).rstrip(".0")
+
+                        dp = record[3].strip()
+                        try:
+                            deptid=Dept.objects.get(deptname=dp)
+                        except Dept.DoesNotExist,e:
+                            traceback.print_stack()
+                            traceback.print_exc()
+                        deptid = Dept.objects.get(deptname=dp)
+                        email = record[4].strip()
+                        phonenum = str(record[2]).rstrip(".0")
+                        status = record[6].strip()
+
+                        if status==u"在职":
+                            statusid=str(0)
+                        elif status==u'离职':
+                            statusid=str(1)
+                        else:
+                            statusid=str(2)
+
+
+                        entry_time = xlrd.xldate.xldate_as_datetime(record[7],1)
+                        if entry_time:
+
+                            datetimeObj = entry_time
+                        else:
+                            datetimeObj=None
+
+                        users = EmployeeUser(engname=engname, chnname=chnname,extnum=extnum,dept=deptid,email=email,phonenum=phonenum,status=statusid,entry_time=datetimeObj)
+
+                        users.save()
+                    except EmployeeUser.DoesNotExist, e:
+                        traceback.print_stack()
+                        traceback.print_exc()
+                        print e
+                successinfo = "上传"
+                success = True
+                return render_to_response('include/employee/upuser.html', {
+                    "title": '导入员工信息',
+                    'form': form,
+                    'successinfo': successinfo,
+                    'success': success,
+                    'username': username}, context_instance=RequestContext(request))
+            except Exception, e:
+                traceback.print_stack()
+                traceback.print_exc()
+                print e
+        else:
+            return render_to_response('include/employee/upuser.html', {
+                "title": '导入员工信息',
+                'form': form,
+                'username': username}, context_instance=RequestContext(request))
+
+
+    return render_to_response('include/employee/upuser.html', RequestContext(request))

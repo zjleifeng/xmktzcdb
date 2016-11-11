@@ -21,7 +21,7 @@
 
 <div class="btn-toolbar list-toolbar">
 
- <form  role="form" method="post" action="/deptsearch/" style="float: left">
+ <form  role="form" method="post" action="{% url 'deptsearch-view' %}" style="float: left">
  {% csrf_token %}
     <input placeholder="搜索部门" type="text"  class="form-control" id="s" name="word"  style="width:200px;float: left;">
 
@@ -30,13 +30,12 @@
 <div style="float: right">
 
 
-    <a href="/adddept/" class="btn btn-primary"><i class="fa fa-plus"></i> 添加新部门</a>
+    <a href="{% url 'adddept-view' %}" class="btn btn-primary"><i class="fa fa-plus"></i> 添加新部门</a>
 
-    <a href="/updept/" class="btn btn-default">导入数据</a>
+    <a href="{% url 'updept-view' %}" class="btn btn-default">导入数据</a>
 
     <input id="openexcelfile" type="file" name="openexcelfile" style="display: none;" />
-
-    <a href="/xlwtdept/" class="btn btn-default">导出数据</a>
+    <a href="{% url 'xlwtdept-view' %}" class="btn btn-default">导出数据</a>
       <input id="yourinputname" type="file" name="yourinputname" value="上传" style="display: none;" />
     </div>
   <div class="btn-group">
@@ -48,6 +47,7 @@
       <th width="30%">部门</th>
       <th  width="50%">上级部门</th>
         <th  width="20%">操作</th>
+        <th>{{ deptload_url }}</th>
 
     </tr>
   </thead>
@@ -61,9 +61,14 @@
 
       <td>
 
-          <a  href="/dept/{{ dept.id }}"><i class="fa fa-pencil"></i></a>
-            <a href="#myModal" role="button" data-toggle="modal"><i class="fa fa-trash-o"></i></a>
-          <a href="#" value="11" role="button" data-toggle="modal" id="parentIframe" onclick="uuuu('/deldept/{{ dept.id }}/')"><i class="fa fa-trash-o"></i></a>
+          <a style="float: left" href="/dept/{{ dept.id }}"><i class="fa fa-pencil"></i></a>
+           <form id="del_dept" action='/deldept/{{ dept.id }}/' method='post' onclick="return del_deptjs()">
+     {% csrf_token %}
+
+<input type='hidden' id='test' name='test'>
+<a style="padding-left: 20px" href="#" type="checkbox"class="fa fa-trash-o"></a>
+<span style="display:none" id='deptid'>{{ dept.deptname }}</span>
+</form>
       </td>
     </tr>
       {% endfor %}
@@ -104,29 +109,23 @@
 </div>
 
 </div>
-<script LANGUAGE="javascript">
-function openwin(url1) { window.open (url1, "newwindow", "height=100, width=400, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no")
+<script>
+function del_deptjs()
+{
+    var getid = document.getElementById("deptid").innerHTML;
 
-}
+    layer.confirm('确认删除部门：（'+getid+"）    吗？", {icon: 3, title:'警告:此部门下的所有员工也会被删除！'}, function(index){
+  //do something
+  $("#del_dept").submit();
+  layer.close(index);
+});
 
 
 
-function update(){
-document.form.action="test.jsp?name=update";
-document.form.submit();
-}
-//弹出一个iframe层
 
-function uuuu(content) {
-    layer.open({
-        type: 2,
-        title: '删除部门',
-        maxmin: true,
-        shadeClose: true, //点击遮罩关闭层
-        area: ['500px', '320px'],
-        content: content
-    });
+
 }
 </script>
+
 
 {% endblock %}
