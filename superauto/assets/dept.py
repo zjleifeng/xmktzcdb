@@ -15,24 +15,61 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response,render,redirect
 from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 
 @login_required
 def DeptView(request):
     paginate_by = settings.PAGE_NUM
     dept_list=Dept.objects.all().order_by('id')
-    paginator = Paginator(dept_list, paginate_by)
+    obj_list = []
+    for obj in dept_list:
+        if obj.delstatus == 0:
+            obj_list.append(obj)
+
+    paginator = Paginator(obj_list, paginate_by)
     page = request.GET.get('page')
+
+    obj_list=[]
+    for obj in dept_list:
+        if obj.delstatus==0:
+            obj_list.append(obj)
+
+
     try:
-        dept_list = paginator.page(page)  # 返回用户请求的页码对象
+        obj_list = paginator.page(page)  # 返回用户请求的页码对象
     except PageNotAnInteger:  # 如果请求中的page不是数字,也就是为空的情况下
-        dept_list = paginator.page(1)
+        obj_list = paginator.page(1)
     except EmptyPage:
         # 如果请求的页码数超出paginator.page_range(),则返回paginator页码对象的最后一页
-        dept_list = paginator.page(paginator.num_pages)
+        obj_list = paginator.page(paginator.num_pages)
 
-    return render(request, 'include/dept/dept.html', {'obj_list': dept_list})
+    return render(request, 'include/dept/dept.html', {'obj_list': obj_list})
 
     #return render_to_response('include/dept.html', locals())
+
+
+@login_required
+def DeptSearchView(request):
+    #if request.method=='POST':
+
+        S=request.GET.get('word','')
+        dept_list=Dept.objects.filter(Q(deptname__icontains=S))
+        if 'S' in request.GET and request.GET['S']:
+            S = request.GET['S']
+
+
+        paginate_by = settings.PAGE_NUM
+        paginator = Paginator(dept_list, paginate_by)
+        page = request.GET.get('page')
+        try:
+            dept_list = paginator.page(page)  # 返回用户请求的页码对象
+        except PageNotAnInteger:  # 如果请求中的page不是数字,也就是为空的情况下
+            dept_list = paginator.page(1)
+        except EmptyPage:
+        # 如果请求的页码数超出paginator.page_range(),则返回paginator页码对象的最后一页
+            dept_list = paginator.page(paginator.num_pages)
+        return render(request, 'include/dept/dept.html', {'obj_list': dept_list})
+
 
 
 
@@ -84,11 +121,13 @@ def EditDept_detail(request,dept_id):
         return render(request, 'include/dept/editdept.html', {'form': form})
 
 @login_required
-def DelDept_detail(request,dept_id):
+def DelDept_detail(request,did):
+    #did=request.POST.get('deldeptid','')
     try:
-        deldept_list=Dept.objects.get(id=dept_id)
+        deldept_list=Dept.objects.get(id=did)
         if request.method=='POST':
-            deldept_list.delete()
+            deldept_list.delstatus=1
+            deldept_list.save()
             return HttpResponseRedirect('/dept/')
         else:
             return render(request, 'include/dept/deldept.html', {'deldept_list':deldept_list})

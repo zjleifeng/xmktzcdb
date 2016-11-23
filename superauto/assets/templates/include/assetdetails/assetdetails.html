@@ -1,0 +1,201 @@
+{% extends "./base.html" %}
+{% url 'loaduser-view' as loaduser_url %}
+
+{% block content %}
+<script type="text/javascript" src="/static/js/wmadmin.js"></script>
+        <div class="header">
+
+            <h1 class="page-title">资产管理</h1>
+                    <ul class="breadcrumb">
+            <li><a href="/">首页</a> </li>
+
+
+            <li class="active">资产列表</li>
+                        <input class="layui-btn layui-btn-mini" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回上一页">
+        </ul>
+
+        </div>
+        <div class="main-content">
+
+<div class="btn-toolbar list-toolbar">
+
+ <form  role="form" method="get" action="{% url 'assetdetailssearch-view' %}" style="float: left">
+ {% csrf_token %}
+    <input placeholder="请输入搜索关键词" type="text"  class="form-control" id="s" name="word"  style="width:200px;float: left;">
+
+
+ <select name="wordtype">
+    <option value="" style="color: red">资产类型：</option>
+     {% if assettype_list %}
+         {% for obj in assettype_list %}
+             <option id="d" value="{{ obj.assettype }}">{{ obj.assettype }}</option>
+         {% endfor %}
+
+     {% endif %}
+ </select>
+
+ <select name="wordbrand">
+    <option value="" style="color: red">资产品牌：</option>
+     {% if assetbrand_list %}
+         {% for obj in assetbrand_list %}
+             <option id="d" value="{{ obj.assetbrands }}">{{ obj.assetbrands }}</option>
+         {% endfor %}
+
+     {% endif %}
+ </select>
+
+ <select name="wordstatus">
+    <option value="" style="color: red">资产状态：</option>
+     {% if assetstatus_list %}
+         {% for obj in assetstatus_list %}
+             <option id="d" value="{{ obj.assettatus }}">{{ obj.assettatus }}</option>
+         {% endfor %}
+
+     {% endif %}
+ </select>
+
+ <button class="btn btn-primary" >搜 索</button>
+     {% if count %}
+     一共搜索到 <a style="color: red">{{ count }}</a> 条记录 |  {% endif %}共<a style="color: red"> {{ allcount }} </a>条
+
+</form>
+<div style="float: right">
+
+
+    <a href="{% url 'addassetdetails-view' %}" class="btn btn-primary"><i class="fa fa-plus"></i> 添加新资产</a>
+
+    <a href="{% url 'upassetdetails-view' %}" class="btn btn-default">导入数据</a>
+
+    <input id="openexcelfile" type="file" name="openexcelfile" style="display: none;" />
+
+    <a href="{% url 'loadassetdetails-view' %}" class="btn btn-default">导出数据</a>
+      <input id="yourinputname" type="file" name="yourinputname" value="上传" style="display: none;" />
+    </div>
+  <div class="btn-group">
+  </div>
+</div>
+<table class="table table-striped table-bordered table-hover">
+  <thead>
+    <tr>
+      <th width="20%">资产编号</th>
+      <th width="10%">财务资产编号</th>
+        <th width="10%">资产类型</th>
+        <th width="10%">品牌</th>
+         <th width="10%">型号</th>
+         <th width="10%">状态</th>
+        <th width="10%">使用者 或 存放点</th>
+
+        <th width="10%">配置信息</th>
+        <th>使用记录</th>
+
+
+         <th>操作</th>
+
+    </tr>
+  </thead>
+  <tbody>
+  {% with obj_list as asset_list %}
+
+  {% if asset_list %}
+      {% for obj in asset_list %}
+           <tr>
+      <td><a href="/assetdetails/{{ obj.id }}"> {{ obj.itno }}</a></td>
+      <td>{{ obj.financeno }}</td>
+      <td> {{ obj.assettype }}</td>
+      <td> {{ obj.brands }}</td>
+      <td> {{ obj.version }}</td>
+      <td> {{ obj.status }}</td>
+      <td>{% if not obj.where %}<a style="color: red">IT保存</a>{% else %}{{ obj.where }}{% endif %}</td>
+
+
+        <td><a href="assetinfo-view">{{ obj.configinfo }}</a></td>
+                     <td><a style="float: right"  href="/record/{{ obj.id }}"><i class="fa btn btn-info">{{ obj.4 }}使用记录</i></a></td>
+
+
+      <td>
+          <a href="/assetdetails/{{ obj.id }}"><i class="fa fa-pencil"></i></a>&nbsp;
+
+    <a href="#delModal{{ obj.id }}" role="button" data-toggle="modal"><i class="fa fa-trash-o"></i></a>
+
+
+    <div class="modal small fade" id="delModal{{ obj.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+<form id="delmodelform{{ obj.id }}" method="post" action="/delassetdetails/{{ obj.id }}/" >
+ {% csrf_token %}
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <a style="color:red;font-size: x-large">删除资产</a>
+        </div>
+
+        <div class="modal-body">
+            <p class="error-text"><i class="fa fa-warning modal-icon"></i>您确定要删除资产  <a style="color: red">{{ obj.itno }}</a><br>如要恢复请登录管理员后台操作</p>
+        </div>
+
+        <div class="modal-footer">
+            <button  class="btn btn-danger" data-dismiss="modal" onclick="submitForm('{{ obj.id }}');">Delete</button>
+            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cancel</button>
+
+        </div>
+      </div>
+    </div>
+</form>
+</div>
+
+
+      </td>
+    </tr>
+      {% endfor %}
+
+
+  {% endif %}
+{% endwith %}
+  </tbody>
+
+</table>
+
+
+
+
+
+<script>
+
+  function submitForm(e) {
+
+                document.getElementById("delmodelform"+e).submit();
+
+     }
+
+function del_userjs()
+{
+    var getid = document.getElementById("asset").innerHTML;
+
+    layer.confirm('确认删除资产：（'+getid+"）    吗？", {icon: 3, title:'提示:删除后不可恢复！'}, function(index){
+  //do something
+  $("#del_user").submit();
+  layer.close(index);
+});
+
+
+
+
+
+}
+</script>
+
+<!--分页 -->
+
+        {% if obj_list %}
+            <div  style="position:absolute;bottom:0px;">
+        {% include 'include/pagination.html' %}
+            </div>
+        {% endif %}
+
+
+
+
+</div>
+
+{% endblock %}

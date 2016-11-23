@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-#
 from django.contrib import admin
-from assets.models import Dept,EmployeeUser,AssetDetails,UserRecord,AssetInfo,RepairInfo,SupplierInfo,SiteInfo
+from assets.models import Dept,EmployeeUser,AssetDetails,UserRecord,AssetInfo,RepairInfo,SupplierInfo,SiteInfo,UserStatus,AssetCdrom,AssetType,AssetChang,AssetStatus,AssetBrands,RecordStatus
 from django.utils.text import capfirst
 from django.utils.datastructures import SortedDict
 
@@ -30,14 +30,19 @@ admin.site.app_index = index_decorator(admin.site.app_index)
 #admin.site.register(yourmodel, yourmodeladmin)
 
 # Register your models here.
+
+class SiteinfoAdmin(admin.ModelAdmin):
+    list_display = ('sitename',)
+
+
 class DeptAdmin(admin.ModelAdmin):
 
     #添加搜索框
     search_fields = ('deptname',)
     #管理列表显示数据字段
-    list_display = ('deptname','parentdept','create_time')
+    list_display = ('deptname','parentdept','delstatus','create_time')
     #添加过滤器，以下面字段进行过滤
-    list_filter = ('deptname','create_time')
+    list_filter = ('deptname','delstatus','create_time')
     #新建面板中可以被编辑的字段
     #fields = ('content','user','ip','create_time','update_time','click_count','is_top')
 
@@ -45,28 +50,28 @@ class EmployeeUserAdmin(admin.ModelAdmin):
     # 添加搜索框
     search_fields = ('engname',)
     # 管理列表显示数据字段
-    list_display = ('engname','dept', 'chnname','extnum','email','phonenum','entry_time','status')
+    list_display = ('engname','dept', 'chnname','extnum','email','phonenum','entry_time','status','delstatus')
     # 添加过滤器，以下面字段进行过滤
-    list_filter = ('engname', 'dept','status')
+    list_filter = ('engname', 'dept','status','delstatus')
     # 新建面板中可以被编辑的字段
     # fields = ('content','user','ip','create_time','update_time','click_count','is_top')
 
 class AssetDetailsAdmin(admin.ModelAdmin):
     search_fields = ('itno','assettype','version','status')
-    list_display = ('itno', 'financeno', 'assettype', 'brands', 'version','status','where')
-    list_filter = ('assettype', 'brands','version','status')
+    list_display = ('itno', 'financeno', 'assettype', 'brands', 'version','status','where','configinfo')
+    list_filter = ('assettype', 'brands','version','status','configinfo')
     # fields = ('content','user','ip','create_time','update_time','click_count','is_top')
 
 class UserRecordAdmin(admin.ModelAdmin):
     search_fields = ('itno','chang','user')
-    list_display = ('itno', 'user', 'chang', 'start_time', 'yend_time','send_time')
-    list_filter = ('itno', 'user','chang')
-    # fields = ('content','user','ip','create_time','update_time','click_count','is_top')
+    list_display = ('itno', 'user', 'chang', 'start_time', 'yend_time','send_time','secordtatus','recordtype','delstatus')
+    list_filter = ('itno', 'user', 'chang', 'start_time', 'recordtype')
+    fields = ('itno', 'user', 'chang', 'start_time', 'yend_time','send_time','secordtatus','recordtype','delstatus')
 
 class AssetInfoAdmin(admin.ModelAdmin):
-    search_fields = ('itno', 'mac')
-    list_display = ('itno', 'cpname', 'disktb', 'memory', 'cdrom', 'videocard', 'cpu','displaycard','ipadress','buy_time')
-    list_filter = ('itno',)
+    search_fields = ('infoname', 'mac')
+    list_display = ('infoname', 'cpname', 'disktb', 'memory', 'cdrom', 'videocard', 'cpu','displaycard','ipadress','buy_time')
+    list_filter = ('infoname',)
     # fields = ('content','user','ip','create_time','update_time','click_count','is_top')
 
 class RepairInfoAdmin(admin.ModelAdmin):
@@ -84,6 +89,27 @@ class SupplierInfoAdmin(admin.ModelAdmin):
     # fields = ('content','user','ip','create_time','update_time','click_count','is_top')
 
 
+class UserStatusAdmin(admin.ModelAdmin):
+    list_display = ('status',)
+
+class AssetTypeAdmin(admin.ModelAdmin):
+    list_display = ('assettype',)
+
+class AssetBrandsAdmin(admin.ModelAdmin):
+    list_display = ('assetbrands',)
+
+class AssetStatusAdmin(admin.ModelAdmin):
+    list_display = ('assettatus',)
+
+class AssetCdromAdmin(admin.ModelAdmin):
+    list_display = ('assetcdrom',)
+
+class AssetChangAdmin(admin.ModelAdmin):
+    list_display = ('assetchang',)
+
+class RecordStatusAdmin(admin.ModelAdmin):
+    list_display = ('recordstatus',)
+
 
 admin.site.register(Dept,DeptAdmin)
 admin.site.register(EmployeeUser,EmployeeUserAdmin)
@@ -93,5 +119,12 @@ admin.site.register(UserRecord,UserRecordAdmin)
 
 admin.site.register(RepairInfo,RepairInfoAdmin)
 admin.site.register(SupplierInfo,SupplierInfoAdmin)
-admin.site.register(SiteInfo)
+admin.site.register(SiteInfo,SiteinfoAdmin)
+admin.site.register(RecordStatus,RecordStatusAdmin)
+admin.site.register(UserStatus,UserStatusAdmin)
+admin.site.register(AssetStatus,AssetStatusAdmin)
+admin.site.register(AssetBrands,AssetBrandsAdmin)
+admin.site.register(AssetType,AssetTypeAdmin)
+admin.site.register(AssetCdrom,AssetCdromAdmin)
+admin.site.register(AssetChang,AssetChangAdmin)
 

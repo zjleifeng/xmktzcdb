@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
@@ -11,31 +12,58 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='AssetBrands',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('assetbrands', models.CharField(unique=True, max_length=100, verbose_name='\u8d44\u4ea7\u578b\u53f7')),
+            ],
+            options={
+                'verbose_name_plural': '\u8d44\u4ea7\u578b\u53f7\u7ba1\u7406',
+            },
+        ),
+        migrations.CreateModel(
+            name='AssetCdrom',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('assetcdrom', models.CharField(unique=True, max_length=100, verbose_name='\u5149\u9a71')),
+            ],
+            options={
+                'verbose_name_plural': '\u5149\u9a71\u7ba1\u7406',
+            },
+        ),
+        migrations.CreateModel(
+            name='AssetChang',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('assetchang', models.CharField(unique=True, max_length=100, verbose_name='\u4f7f\u7528\u7c7b\u578b')),
+            ],
+            options={
+                'verbose_name_plural': '\u4f7f\u7528\u7c7b\u578b\u7ba1\u7406',
+            },
+        ),
+        migrations.CreateModel(
             name='AssetDetails',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('itno', models.CharField(max_length=200, verbose_name='IT\u8d44\u4ea7\u7f16\u53f7')),
+                ('itno', models.CharField(unique=True, max_length=200, verbose_name='IT\u8d44\u4ea7\u7f16\u53f7')),
                 ('financeno', models.CharField(max_length=100, null=True, verbose_name='\u8d22\u52a1\u8d44\u4ea7\u7f16\u53f7', blank=True)),
                 ('newno', models.CharField(max_length=100, null=True, verbose_name='\u65b0\u8d44\u4ea7\u7f16\u53f7', blank=True)),
-                ('assettype', models.IntegerField(verbose_name='\u8d44\u4ea7\u7c7b\u578b', choices=[(0, '\u7b14\u8bb0\u672c'), (1, '\u53f0\u5f0f\u673a'), (2, '\u670d\u52a1\u5668'), (3, '\u5176\u4ed6')])),
-                ('brands', models.IntegerField(default=0, verbose_name='\u54c1\u724c', choices=[(0, 'DELL(\u6234\u5c14)'), (1, 'Lenovo(\u8054\u60f3)'), (2, 'Asus(\u534e\u7855)'), (3, 'Apple(\u82f9\u679c)'), (4, 'Sony(\u7d22\u5c3c)')])),
                 ('version', models.CharField(max_length=200, verbose_name='\u578b\u53f7')),
-                ('status', models.IntegerField(default=0, choices=[(0, '\u95f2\u7f6e'), (1, '\u4f7f\u7528\u4e2d')])),
-                ('where', models.CharField(max_length=200, verbose_name='\u5b58\u653e\u5730\u70b9')),
+                ('delstatus', models.IntegerField(default=0, verbose_name='\u5220\u9664\u72b6\u6001(0:\u672a\u5220\u9664,1:\u5df2\u5220\u9664\u4e0d\u53ef\u663e\u793a)')),
                 ('creare_time', models.DateTimeField(auto_now_add=True, verbose_name='\u521b\u5efa\u65f6\u95f4')),
             ],
             options={
                 'ordering': ['-creare_time'],
-                'verbose_name_plural': '\u8d44\u4ea7\u4fe1\u606f',
+                'verbose_name_plural': '\u8d44\u4ea7\u5217\u8868',
             },
         ),
         migrations.CreateModel(
             name='AssetInfo',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('infoname', models.CharField(unique=True, max_length=200, verbose_name='\u914d\u7f6e\u540d\u79f0')),
                 ('disktb', models.CharField(max_length=100, verbose_name='\u786c\u76d8\u5bb9\u91cf')),
                 ('memory', models.CharField(max_length=20, verbose_name='\u5185\u5b58\u5927\u5c0f')),
-                ('cdrom', models.IntegerField(default=0, verbose_name='\u662f\u5426\u6709\u5149\u9a71', choices=[(0, '\u65e0\u5149\u9a71'), (1, '\u6709\u5149\u9a71')])),
                 ('videocard', models.CharField(max_length=200, null=True, verbose_name='\u663e\u5361', blank=True)),
                 ('cpu', models.CharField(max_length=200, null=True, verbose_name='CPU', blank=True)),
                 ('displaycard', models.CharField(max_length=200, null=True, verbose_name='\u663e\u793a\u5c4f', blank=True)),
@@ -44,9 +72,10 @@ class Migration(migrations.Migration):
                 ('ipadress', models.GenericIPAddressField(null=True, verbose_name='IP\u5730\u5740', blank=True)),
                 ('wifi_mac', models.CharField(max_length=200, null=True, verbose_name='wifi-MAC\u5730\u5740', blank=True)),
                 ('wifi_ip', models.GenericIPAddressField(null=True, verbose_name='wifi-IP\u5730\u5740', blank=True)),
+                ('delstatus', models.IntegerField(default=0, verbose_name='\u5220\u9664\u72b6\u6001(0:\u672a\u5220\u9664,1:\u5df2\u5220\u9664\u4e0d\u53ef\u663e\u793a)')),
                 ('buy_time', models.DateTimeField(null=True, verbose_name='\u8d2d\u4e70\u65e5\u671f', blank=True)),
                 ('create_time', models.DateTimeField(auto_now_add=True, verbose_name='\u521b\u5efa\u65f6\u95f4')),
-                ('itno', models.ForeignKey(verbose_name='IT\u8d44\u4ea7\u7f16\u53f7', to='assets.AssetDetails')),
+                ('cdrom', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, verbose_name='\u662f\u5426\u6709\u5149\u9a71', blank=True, to='assets.AssetCdrom', null=True)),
             ],
             options={
                 'ordering': ['-create_time'],
@@ -54,11 +83,32 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='AssetStatus',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('assettatus', models.CharField(unique=True, max_length=100, verbose_name='\u8d44\u4ea7\u72b6\u6001')),
+            ],
+            options={
+                'verbose_name_plural': '\u8d44\u4ea7\u72b6\u6001\u7ba1\u7406',
+            },
+        ),
+        migrations.CreateModel(
+            name='AssetType',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('assettype', models.CharField(unique=True, max_length=100, verbose_name='\u8d44\u4ea7\u7c7b\u578b')),
+            ],
+            options={
+                'verbose_name_plural': '\u8d44\u4ea7\u7c7b\u578b\u7ba1\u7406',
+            },
+        ),
+        migrations.CreateModel(
             name='Dept',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('deptname', models.CharField(max_length=200, verbose_name='\u90e8\u95e8\u540d\u79f0')),
+                ('deptname', models.CharField(unique=True, max_length=200, verbose_name='\u90e8\u95e8\u540d\u79f0')),
                 ('create_time', models.DateTimeField(auto_now_add=True, verbose_name='\u521b\u5efa\u65f6\u95f4')),
+                ('delstatus', models.IntegerField(default=0, verbose_name='\u5220\u9664\u72b6\u6001(0:\u672a\u5220\u9664,1:\u5df2\u5220\u9664\u4e0d\u53ef\u663e\u793a)')),
                 ('parentdept', models.ForeignKey(verbose_name='\u4e0a\u7ea7\u90e8\u95e8', blank=True, to='assets.Dept', null=True)),
             ],
             options={
@@ -70,14 +120,15 @@ class Migration(migrations.Migration):
             name='EmployeeUser',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('engname', models.CharField(max_length=200, verbose_name='\u82f1\u6587\u540d')),
+                ('engname', models.CharField(unique=True, max_length=200, verbose_name='\u82f1\u6587\u540d')),
                 ('chnname', models.CharField(max_length=200, verbose_name='\u4e2d\u6587\u540d')),
                 ('extnum', models.IntegerField(verbose_name='\u5206\u673a\u53f7')),
                 ('phonenum', models.BigIntegerField(verbose_name='\u624b\u673a\u53f7')),
                 ('email', models.EmailField(max_length=254, verbose_name='\u90ae\u7bb1\u5730\u5740')),
-                ('entry_time', models.DateTimeField(null=True, verbose_name='\u5165\u804c\u65e5\u671f', blank=True)),
+                ('entry_time', models.DateField(null=True, verbose_name='\u5165\u804c\u65e5\u671f', blank=True)),
+                ('delstatus', models.IntegerField(default=0, verbose_name='\u5220\u9664\u72b6\u6001(0:\u672a\u5220\u9664,1:\u5df2\u5220\u9664\u4e0d\u53ef\u663e\u793a)')),
                 ('creare_time', models.DateTimeField(auto_now_add=True, verbose_name='\u521b\u5efa\u65f6\u95f4')),
-                ('dept', models.ForeignKey(verbose_name='\u90e8\u95e8', to='assets.Dept')),
+                ('dept', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, verbose_name='\u90e8\u95e8', blank=True, to='assets.Dept', null=True)),
             ],
             options={
                 'ordering': ['-creare_time'],
@@ -133,17 +184,57 @@ class Migration(migrations.Migration):
             name='UserRecord',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('chang', models.IntegerField(default=0, verbose_name='\u4f7f\u7528\u7c7b\u578b', choices=[(0, '\u6b63\u5e38\u9886\u7528'), (1, '\u77ed\u671f\u501f\u7528'), (2, '\u8c03\u62e8\u5916\u5730'), (3, '\u5176\u4ed6')])),
                 ('start_time', models.DateTimeField(auto_now=True, verbose_name='\u9886\u7528\u65e5\u671f')),
                 ('yend_time', models.DateTimeField(auto_now=True, verbose_name='\u9884\u8ba1\u5f52\u8fd8\u65e5\u671f', null=True)),
                 ('send_time', models.DateTimeField(auto_now=True, verbose_name='\u5b9e\u9645\u5f52\u8fd8\u65f6\u95f4', null=True)),
                 ('creare_time', models.DateTimeField(auto_now_add=True, verbose_name='\u521b\u5efa\u65f6\u95f4')),
+                ('chang', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, verbose_name='\u4f7f\u7528\u7c7b\u578b', blank=True, to='assets.AssetChang', null=True)),
                 ('itno', models.ForeignKey(verbose_name='IT\u8d44\u4ea7\u7f16\u53f7', to='assets.AssetDetails')),
-                ('user', models.ForeignKey(verbose_name='\u4f7f\u7528\u8005', blank=True, to='assets.EmployeeUser', null=True)),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, verbose_name='\u4f7f\u7528\u8005', blank=True, to='assets.EmployeeUser', null=True)),
             ],
             options={
                 'ordering': ['start_time'],
                 'verbose_name_plural': '\u4f7f\u7528\u8bb0\u5f55',
             },
+        ),
+        migrations.CreateModel(
+            name='UserStatus',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('status', models.CharField(unique=True, max_length=100, verbose_name='\u5f53\u524d\u5458\u5de5\u72b6\u6001')),
+            ],
+            options={
+                'verbose_name_plural': '\u5f53\u524d\u5458\u5de5\u72b6\u6001\u7ba1\u7406',
+            },
+        ),
+        migrations.AddField(
+            model_name='employeeuser',
+            name='status',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, verbose_name='\u5f53\u524d\u5458\u5de5\u72b6\u6001', blank=True, to='assets.UserStatus', null=True),
+        ),
+        migrations.AddField(
+            model_name='assetdetails',
+            name='assettype',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, verbose_name='\u8d44\u4ea7\u7c7b\u578b', blank=True, to='assets.AssetType', null=True),
+        ),
+        migrations.AddField(
+            model_name='assetdetails',
+            name='brands',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, verbose_name='\u54c1\u724c', blank=True, to='assets.AssetBrands', null=True),
+        ),
+        migrations.AddField(
+            model_name='assetdetails',
+            name='configinfo',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, verbose_name='\u914d\u7f6e\u4fe1\u606f', blank=True, to='assets.AssetInfo', null=True),
+        ),
+        migrations.AddField(
+            model_name='assetdetails',
+            name='status',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, verbose_name='\u4f7f\u7528\u72b6\u6001', blank=True, to='assets.AssetStatus', null=True),
+        ),
+        migrations.AddField(
+            model_name='assetdetails',
+            name='where',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, verbose_name='\u5b58\u653e\u5730\u70b9', blank=True, to='assets.EmployeeUser', null=True),
         ),
     ]

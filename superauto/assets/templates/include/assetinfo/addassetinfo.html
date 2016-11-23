@@ -1,0 +1,43 @@
+{% extends "./base.html" %}
+{% block content %}
+
+
+
+
+
+<div class="header">
+
+            <h1 class="page-title">资产详情</h1>
+                    <ul class="breadcrumb">
+            <li><a href="/">首页</a> </li>
+                        <li><a href="{% url 'assetinfo-view' %}">资产详情</a> </li>
+            <li class="active">添加新详情</li>
+                        <input class="layui-btn layui-btn-mini" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回上一页">
+        </ul>
+
+        </div>
+    <div class="main-content">
+
+
+<form action="" method="post">
+                {% csrf_token %}
+
+{{ form.media }}
+
+{{ form.as_p }}
+
+
+
+
+
+
+                <div class="btn-toolbar list-toolbar">
+      <button class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+
+    </div>
+
+
+                <div class="clearfix"></div>
+            </form>
+    </div>
+{% endblock %}

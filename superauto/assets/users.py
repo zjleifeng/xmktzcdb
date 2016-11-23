@@ -17,7 +17,7 @@ from django.http import HttpResponseRedirect,HttpResponse
 from assets.models import EmployeeUser
 from django.core.exceptions import PermissionDenied
 from forms import AddUserForm
-from assets.models import Dept
+from assets.models import Dept,UserStatus
 from xlwt import *
 import StringIO
 from assets.forms import UpForm
@@ -32,10 +32,19 @@ import datetime
 @login_required
 def UsersView(request):
     paginate_by=settings.PAGE_NUM
-    obj_list=EmployeeUser.objects.all().order_by('id')
-    allcount=obj_list.count()
+    user_list=EmployeeUser.objects.all().order_by('id')
+    obj_list=[]
+    for obj in user_list:
+        if obj.delstatus==0:
+            obj_list.append(obj)
+
+    allcount=len(obj_list)
+
     paginator=Paginator(obj_list,paginate_by)
     page=request.GET.get('page')
+    dept_list=Dept.objects.all()
+    status_list=UserStatus.objects.all()
+
     try:
         obj_list=paginator.page(page)
     except PageNotAnInteger:  # 如果请求中的page不是数字,也就是为空的情况下
@@ -43,15 +52,47 @@ def UsersView(request):
     except EmptyPage:
         # 如果请求的页码数超出paginator.page_range(),则返回paginator页码对象的最后一页
         obj_list = paginator.page(paginator.num_pages)
-    return render(request,'include/employee/users.html',{'obj_list':obj_list,'allcount':allcount})
+    return render(request,'include/employee/users.html',{'obj_list':obj_list,'dept_list':dept_list,'status_list':status_list,'allcount':allcount})
 
 @login_required
 def UserSearchView(request):
-    S=request.POST.get('word','')
-    users_list=EmployeeUser.objects.filter(Q(engname__contains=S)|Q(chnname__contains=S)|Q(dept__deptname__contains=S))
-   # sqlyu= EmployeeUser.objects.filter(Q(engname__contains=S)|Q(chnname__contains=S)|Q(dept__deptname__contains=S)).query
-    count=users_list.count()
+    S=request.GET.get('word','')
+    WT=request.GET.get('wordd','')
+    WB=request.GET.get('words','')
+    if 'S' in request.GET and request.GET['S']:
+        S = request.GET['S']
+    if 'WT' in request.GET and request.GET['WT']:
+        WT = request.GET['WT']
+    if 'WB' in request.GET and request.GET['WB']:
+        WB = request.GET['WB']
+
+    dept_list=Dept.objects.all()
+    status_list=UserStatus.objects.all()
+    if not WT and not WB:
+        users_list = EmployeeUser.objects.filter(
+            (Q(engname__icontains=S) | Q(chnname__icontains=S)))
+    elif not WT:
+        users_list=EmployeeUser.objects.filter((Q(engname__icontains=S)| Q(chnname__icontains=S)) &Q(status__status__iexact=WB))
+    elif not WB:
+        users_list = EmployeeUser.objects.filter(
+            (Q(engname__icontains=S) | Q(chnname__icontains=S)) & Q(dept__deptname__iexact=WT))
+    else:
+        users_list = EmployeeUser.objects.filter(
+            (Q(engname__icontains=S) | Q(chnname__icontains=S)) & Q(dept__deptname__iexact=WT) & Q(
+                status__status__iexact=WB))
+
+
+    #sqlyu = EmployeeUser.objects.filter(Q(engname__contains=S) | Q(chnname__contains=S) & Q(dept__deptname__contains=D))
+
+
     allcount=EmployeeUser.objects.all().count()
+
+    obj_list=[]
+    for obj in users_list:
+        if obj.delstatus==0:
+            obj_list.append(obj)
+    count=len(obj_list)
+
     paginate_by = settings.PAGE_NUM
     paginator=Paginator(users_list,paginate_by)
     page=request.GET.get('page')
@@ -61,7 +102,7 @@ def UserSearchView(request):
         users_list=paginator.page(1)
     except EmptyPage:
         users_list=paginator.page(paginator.num_pages)
-    return render(request,'include/employee/users.html',{'obj_list':users_list,'count':count,'allcount':allcount})
+    return render(request,'include/employee/users.html',{'obj_list':users_list,'S':S,'WT':WT,'WB':WB,'dept_list':dept_list,'status_list':status_list,'count':count,'allcount':allcount})
 
 @login_required
 def AddUser(request):
@@ -81,23 +122,26 @@ def AddUser(request):
 
 @login_required
 def EditUser(request,users_id):
-    obj_list=EmployeeUser.objects.get(id=users_id)
-    if request.method=='POST':
-        form=AddUserForm(request.POST,instance=obj_list)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/users/')
-    else:
-        form=AddUserForm(instance=obj_list)
-        return render(request,'include/employee/edituser.html',{'form':form})
-
+    try:
+        obj_list=EmployeeUser.objects.get(id=users_id)
+        if request.method=='POST':
+            form=AddUserForm(request.POST,instance=obj_list)
+            if form.is_valid():
+                form.save()
+                return HttpResponseRedirect('/users/')
+        else:
+            form=AddUserForm(instance=obj_list)
+            return render(request,'include/employee/edituser.html',{'form':form})
+    except EmployeeUser.DoesNotExist:
+        raise PermissionDenied
 
 @login_required
 def DelUser(request,users_id):
         try:
             obj_list = EmployeeUser.objects.get(id=users_id)
             if request.method == 'POST':
-                obj_list.delete()
+                obj_list.delstatus=1
+                obj_list.save()
 
                 return HttpResponseRedirect('/users/')
                 #return render_to_response('/users/', RequestContext(request, {'success': success,'obj_list':obj_list}))
@@ -108,10 +152,6 @@ def DelUser(request,users_id):
             raise PermissionDenied
 
 
-
-@login_required
-def UpUser(request):
-    pass
 
 @login_required
 def LoadUser(request):
@@ -214,12 +254,20 @@ def LoadUser(request):
                 dept=obj.dept.deptname
                 email=obj.email
                 phonenum=str(obj.phonenum)
-                status=obj.get_status_display()
+
+                status_obj=obj.status
+                if not status_obj:
+                    status=" "
+                else:
+                    status=obj.status.status
+
+
                 if not obj.entry_time:
                     entry_time=" "
                 else:
-
-                    entry_time=obj.entry_time.strftime("%Y-%m-%d")
+                    #tt=time.strftime(obj.entry_time,"%Y/%m/%d")
+                    entry_time=obj.entry_time.strftime("%Y/%m/%d")
+                    timeArray = time.strptime(entry_time, "%Y/%m/%d")
                     #xx=entry_time.strftime("%Y-%m-%d");
                     #xx=time.strptime("%Y/%m/%d", entry_time)
 
@@ -232,7 +280,7 @@ def LoadUser(request):
                 sheet.write(excel_row, 4, email, style_body)
                 sheet.write(excel_row, 5, phonenum, style_body)
                 sheet.write(excel_row, 6, status, style_body)
-                sheet.write(excel_row, 7, entry_time,style_body)
+                sheet.write(excel_row, 7, entry_time,style)
                 excel_row += 1
 
             fname='usersfile.xls'
@@ -286,27 +334,38 @@ def UpUser(request):
                         except Dept.DoesNotExist,e:
                             traceback.print_stack()
                             traceback.print_exc()
-                        deptid = Dept.objects.get(deptname=dp)
+                        #deptid = Dept.objects.get(deptname=dp)
                         email = record[4].strip()
-                        phonenum = str(record[2]).rstrip(".0")
-                        status = record[6].strip()
-
-                        if status==u"在职":
-                            statusid=str(0)
-                        elif status==u'离职':
-                            statusid=str(1)
+                        phonenum = str(record[5]).rstrip(".0")
+                        status_obj = record[6].strip()
+                        if status_obj:
+                            try:
+                                status_id=UserStatus.objects.get(status=status_obj)
+                            except UserStatus.DoesNotExist:
+                                traceback.print_stack()
+                                traceback.print_exc()
                         else:
-                            statusid=str(2)
+                            status_id=None
+
+                        e_date=record[7]
+                        if e_date:
+                            tp=type(e_date)
+                            if tp==float:
+
+                                entry_time = xlrd.xldate.xldate_as_datetime(record[7],0)
+                                #mk=type(entry_time)
+                            elif tp==unicode:
+                                #s=e_date.split('/')
+                                entry_time=datetime.datetime.strptime(e_date,'%Y/%m/%d')
+                                #entry_time=datetime.datetime(s[0],s[1],s[2])
+                                #mk = type(entry_time)
 
 
-                        entry_time = xlrd.xldate.xldate_as_datetime(record[7],1)
-                        if entry_time:
-
-                            datetimeObj = entry_time
+                            #datetimeObj = entry_time
                         else:
-                            datetimeObj=None
+                            entry_time=None
 
-                        users = EmployeeUser(engname=engname, chnname=chnname,extnum=extnum,dept=deptid,email=email,phonenum=phonenum,status=statusid,entry_time=datetimeObj)
+                        users = EmployeeUser(engname=engname, chnname=chnname,extnum=extnum,dept=deptid,email=email,phonenum=phonenum,status=status_id,entry_time=entry_time)
 
                         users.save()
                     except EmployeeUser.DoesNotExist, e:

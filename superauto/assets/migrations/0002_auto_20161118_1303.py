@@ -12,8 +12,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name='employeeuser',
-            name='entry_time',
-            field=models.DateField(null=True, verbose_name='\u5165\u804c\u65e5\u671f', blank=True),
+            model_name='assetinfo',
+            name='buy_time',
+            field=models.DateField(null=True, verbose_name='\u8d2d\u4e70\u65e5\u671f', blank=True),
         ),
     ]

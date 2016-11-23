@@ -10,7 +10,7 @@ from django import forms
 from fields import UsernameField,PasswordField
 from django.contrib.auth import authenticate,login
 from django.forms import ModelForm
-from assets.models import Dept,EmployeeUser
+from assets.models import Dept,EmployeeUser,AssetDetails,AssetInfo,UserRecord
 from django.contrib.auth.models import User
 from bootstrap_toolkit.widgets import BootstrapDateInput,BootstrapTextInput,BootstrapUneditableInput
 
@@ -132,3 +132,21 @@ class AddUserForm(ModelForm):
         }
     #def clean_entry_time(self):
         #entry_time=forms.DateField(widget=widgets.AdminDateWidget(), label=u'入职日期')
+
+
+class AddAssetDetailsForm(ModelForm):
+    class Meta:
+        model=AssetDetails
+        fields=('itno','financeno','assettype','brands','version','status','where','configinfo')
+
+class AddAssetinfoForm(ModelForm):
+    class Meta:
+        model=AssetInfo
+        fields=('__all__')
+
+
+class AddRecordForm(ModelForm):
+    class Meta:
+        model=UserRecord
+        fields=('__all__')
+
