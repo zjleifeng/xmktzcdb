@@ -22,17 +22,14 @@ def DeptView(request):
     paginate_by = settings.PAGE_NUM
     dept_list=Dept.objects.all().order_by('id')
     obj_list = []
-    for obj in dept_list:
-        if obj.delstatus == 0:
-            obj_list.append(obj)
+    if dept_list:
+        for obj in dept_list:
+            if obj.delstatus == 0:
+                obj_list.append(obj)
 
     paginator = Paginator(obj_list, paginate_by)
     page = request.GET.get('page')
 
-    obj_list=[]
-    for obj in dept_list:
-        if obj.delstatus==0:
-            obj_list.append(obj)
 
 
     try:
@@ -68,7 +65,7 @@ def DeptSearchView(request):
         except EmptyPage:
         # 如果请求的页码数超出paginator.page_range(),则返回paginator页码对象的最后一页
             dept_list = paginator.page(paginator.num_pages)
-        return render(request, 'include/dept/dept.html', {'obj_list': dept_list})
+        return render(request, 'include/dept/dept.html', {'obj_list': dept_list,'S':S})
 
 
 

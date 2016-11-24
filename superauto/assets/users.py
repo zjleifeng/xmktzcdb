@@ -34,9 +34,10 @@ def UsersView(request):
     paginate_by=settings.PAGE_NUM
     user_list=EmployeeUser.objects.all().order_by('id')
     obj_list=[]
-    for obj in user_list:
-        if obj.delstatus==0:
-            obj_list.append(obj)
+    if user_list:
+        for obj in user_list:
+            if obj.delstatus==0:
+                obj_list.append(obj)
 
     allcount=len(obj_list)
 

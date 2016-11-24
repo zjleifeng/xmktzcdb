@@ -38,6 +38,29 @@
     </script>
 
 
+<style type="text/css">
+
+
+#navigation li a
+{
+display:block; /* 区块显示*/
+padding:5px 5px 5px 0.5em;
+text-decoration:none;
+border-left:12px solid #711515; /* 左边的粗红边*/
+border-right:1px solid #711515; /* 右侧阴影*/
+}
+#navigation li a:link,#navigation li a:visited /* 超链接正常状态、被访问过的状态*/
+{
+background-color:#c11136; /* 设置背景色*/
+color:#FFFFFF; /* 设置文字颜色*/
+}
+#navigation li a:hover /*鼠标经过时*/
+{
+background-color:#990020; /* 改变背景色*/
+color:#ffff00; /* 改变文字颜色*/
+}
+</style>
+
     <link rel="stylesheet" type="text/css" href="/static/stylesheets/theme.css">
     <link rel="stylesheet" type="text/css" href="/static/stylesheets/premium.css">
 
@@ -102,36 +125,42 @@
 
   <!--<![endif]-->
 
-    <div class="navbar navbar-default" role="navigation">
+    <div class="dropdown navbar navbar-default" role="navigation">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle</span>
+
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
           <a class="" href="index.html"><span class="navbar-brand"><span class="fa fa-paper-plane"></span> {{ sitename }}</span></a></div>
 
-        <div class="navbar-collapse collapse" style="height: 1px;">
+        <div class="navbar-collapse collapse" style="height: 1px;" id="navigation">
           <ul id="main-menu" class="nav navbar-nav navbar-right">
 
             <li class="dropdown hidden-xs">
+
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <span class="glyphicon glyphicon-user padding-right-small" style="position:relative;top: 3px;"></span> {{ username }}
+                    <span class="glyphicon glyphicon-user padding-right-small" style="position:relative;top: 3px;"></span>{{ username }}
                     <i class="fa fa-caret-down"></i>
                 </a>
 
-              <ul class="dropdown-menu">
-                <li><a href="#">用户信息</a></li>
-                <li class="divider"></li>
-                <li class="dropdown-header">管理员</li>
+              <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                  <li role="presentation" class="dropdown-header">管理员设置</li>
 
-                <li><a href="#">资产管理</a></li>
-                <li><a tabindex="-1" href="./">员工管理</a></li>
-                  <li><a href="#">供应商管理</a></li>
-                  <li><a href="#">返回首页</a></li>
                 <li class="divider"></li>
-                <li><a tabindex="-1" href="#">注销</a></li>
+
+                <li role="presentation" >
+			<a role="menuitem" tabindex="-1" href="{% url 'assetdetails-view' %}">资产管理</a>
+		</li>
+
+                <li><a tabindex="-1" href="{% url 'users-view' %}">员工管理</a></li>
+                  <li><a href="{% url 'supplier-view' %}">供应商管理</a></li>
+                  <li><a href="/">返回首页</a></li>
+                <li class="divider"></li>
+                  <li><a tabindex="-1" href="/admin/" target="_blank">登录到后台</a></li>
+                  <li class="divider"></li>
+                <li><a tabindex="-1" href="{% url 'userlogout' %}">注销</a></li>
               </ul>
             </li>
           </ul>

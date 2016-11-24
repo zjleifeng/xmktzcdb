@@ -66,7 +66,7 @@
          <th width="10%">是否有光驱</th>
          <th width="10%">显卡</th>
         <th width="5%">CPU</th>
-        <th width="5%">显示器</th>
+        <th width="10%">显示器</th>
         <th width="10%">IP地址</th>
         <th width="10%">购买日期</th>
 
@@ -75,27 +75,27 @@
     </tr>
   </thead>
   <tbody>
-  {% with obj_list as assetinfo_list %}
 
-  {% if assetinfo_list %}
-      {% for obj in assetinfo_list %}
-           <tr>
-      <td><a href="/assetinfo/{{ obj.id }}"> {{ obj.infoname }}</a></td>
+
+  {% if obj_list %}
+      {% for obj in obj_list %}
+      <tr>
+      <td><a title="点击修改此配置" href="/assetinfo/{{ obj.id }}"> {{ obj.infoname }}</a></td>
       <td>{{ obj.cpname }}</td>
       <td> {{ obj.disktb }}</td>
       <td> {{ obj.memory }}</td>
-      <td> {{ obj.cdrom }}</td>
+      <td> {% if obj.cdrom %}{{ obj.cdrom }}{% else %}{{ '' }}{% endif %}</td>
       <td> {{ obj.videocard }}</td>
       <td>{{ obj.cpu }}</td>
                 <td>{{ obj.displaycard }}</td>
         <td>{{ obj.ipadress }}</td>
-               <td>{{ obj.buy_time }}</td>
+               <td>{% if obj.buy_time %}{{ obj.buy_time }}{% else %}{{ '' }}{% endif %}</td>
 
 
       <td>
-          <a href="/assetinfo/{{ obj.id }}"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a title="修改" href="/assetinfo/{{ obj.id }}"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;
 
-    <a href="#delModal{{ obj.id }}" role="button" data-toggle="modal"><i class="fa fa-trash-o"></i></a>
+    <a title="删除" href="#delModal{{ obj.id }}" role="button" data-toggle="modal"><i class="fa fa-trash-o"></i></a>
     <div class="modal small fade" id="delModal{{ obj.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 
 <form id="delmodelform{{ obj.id }}" method="post" action="/delassetinfo/{{ obj.id }}/" >
@@ -129,7 +129,7 @@
 
 
   {% endif %}
-{% endwith %}
+
   </tbody>
 
 </table>

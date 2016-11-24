@@ -42,6 +42,13 @@ def updept(request):
     username = request.user.username
     return render_to_response('include/dept/updept.html', {'username': username})
 
+@login_required
+def logout(request):
+    auth.logout(request)
+    return HttpResponseRedirect("/accounts/login/")
+
+def forgot_password(request):
+    pass
 
 """
 website_title=settings.WEBSITE_TITLE

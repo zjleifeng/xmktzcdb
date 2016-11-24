@@ -1,10 +1,99 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "./base.html" %}
 
-</body>
-</html>
+{% block content %}
+<div class="header">
+
+            <h1 class="page-title">资产管理</h1>
+                    <ul class="breadcrumb">
+            <li><a href="/">首页</a> </li>
+            <li><a href="{% url 'assetdetails-view' %}">资产管理</a> </li>
+            <li class="active">上传使用记录</li>
+                      <input class="layui-btn layui-btn-mini" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回上一页">
+        </ul>
+
+
+</div>
+   <div class="main-content">
+<div>
+                        <span><h2>使用记录上传</h2></span>
+                    </div>
+   <div>
+
+                    </div>
+   <div style="color: red">
+       {% if form.upform.errors %}
+                    <div class="error" style="padding-top: 50px" >
+                        {% if form.upform.errors %}
+                            {{ form.upform.errors }}
+                        {% endif %}
+                    </div>
+                {% endif %}
+                {% if success %}
+                    <div id='success' class="success" style="padding-top: 50px">
+                        您已经{{successinfo}}成功!
+                    </div>
+                {% endif %}
+   </div>
+   <div class="col-md-4">
+    <br>
+    <div id="myTabContent" class="tab-content">
+      <div class="tab-pane active in" id="home">
+          <form id="importup" method="post" enctype="multipart/form-data" class="mws-form" action="{% url 'upuserecord-view' %}">
+ {% csrf_token %}
+              <div >
+                                        <input type="file" name="upform" id='upform' {% if form.upform.errors %} class="error" {% endif %}/>
+                                        <label for="picture" class="error" generated="true" style="display:none"></label>
+                                        <div class="error-messages">
+                                            {% if form.upform.errors %}
+                                                <label for="upform" generated="true" class="error" style="">{{form.upform.errors}}</label>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+<br><br><br>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+          <input type="reset" value="重置" class="btn btn-danger" />
+        </form>
+      </div>
+
+
+    </div>
+
+    <div class="btn-toolbar list-toolbar">
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+   </div>
+                <!-- Panels End -->
+    <script>
+ $('#importup').validate({
+                errorPlacement:function(label,elem){
+                    elem.closest('.mws-form-row').find('.error-messages').append(label);
+                },
+                rules:{
+                    upform:{
+                        required:true,
+                        accept:"xls",
+                    },
+                },
+                messages:{
+                    upform:{
+                        required:"必须选择一个文件",
+                        accept:"导入文件以xls结尾的excel",
+                    },
+                },
+                invalidHandler: function(form, validator) {
+                    ;
+                }
+            });
+    </script>
+{% endblock %}

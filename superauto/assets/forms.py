@@ -10,7 +10,7 @@ from django import forms
 from fields import UsernameField,PasswordField
 from django.contrib.auth import authenticate,login
 from django.forms import ModelForm
-from assets.models import Dept,EmployeeUser,AssetDetails,AssetInfo,UserRecord
+from assets.models import Dept,EmployeeUser,AssetDetails,AssetInfo,UserRecord,RepairInfo,SupplierInfo
 from django.contrib.auth.models import User
 from bootstrap_toolkit.widgets import BootstrapDateInput,BootstrapTextInput,BootstrapUneditableInput
 
@@ -150,3 +150,18 @@ class AddRecordForm(ModelForm):
         model=UserRecord
         fields=('__all__')
 
+class AddRepairForm(ModelForm):
+    class Meta:
+        model=RepairInfo
+        fields=('itno','start_time','end_time','repinfo','issure','whorep','whophone')
+        widgets={
+
+                    "start_time":forms.TextInput(attrs={"class":"laydate-icon","onclick":"laydate()"}),
+                    "end_time": forms.TextInput(attrs={"class": "laydate-icon", "onclick": "laydate()"})
+
+                }
+
+class AddSupplierForm(ModelForm):
+    class Meta:
+        model=SupplierInfo
+        fields=('corporate_name','corporate_adress','corporate_phone','corporate_site','contect_name','contect_phone','contect_email')

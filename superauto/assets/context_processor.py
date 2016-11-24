@@ -23,8 +23,9 @@ def siteinfo(request):
         agent='unknown'
 
     now_time = datetime.datetime.now()
+    username=request.user.username
 
-    return {'sitename':sitename,'ip_address': ip,'agent':agent,'now_time':now_time}
+    return {'sitename':sitename,'ip_address': ip,'agent':agent,'now_time':now_time,'username':username}
 
 #def ip_address(request):
   #  return {'ip_address': request.META['REMOTE_ADDR']}

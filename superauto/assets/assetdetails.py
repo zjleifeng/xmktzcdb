@@ -27,7 +27,7 @@ import traceback
 import time
 import datetime
 from forms import AddAssetDetailsForm
-from assets.models import AssetDetails,AssetType,AssetBrands,AssetStatus,EmployeeUser,UserRecord,RecordStatus
+from assets.models import AssetDetails,AssetType,AssetBrands,AssetStatus,EmployeeUser,UserRecord,RecordStatus,AssetInfo
 
 
 @login_required
@@ -37,11 +37,11 @@ def AssetDetailsView(request):
     type(assetdetails_list)
     obj_list=[]
     count_list=[]
-
-    for obj in assetdetails_list:
-        if obj.delstatus==0:
-            count_list.append(UserRecord.objects.filter(Q(itno__itno__contains=obj.itno)).count())
-            obj_list.append(obj)
+    if assetdetails_list:
+        for obj in assetdetails_list:
+            if obj.delstatus==0:
+                count_list.append(UserRecord.objects.filter(Q(itno__itno__contains=obj.itno)).count())
+                obj_list.append(obj)
 
 
     allcount=len(obj_list)
@@ -88,6 +88,16 @@ def Record_search(request,itno_id):
 
     return render(request,'include/userecord/userecord.html',{'obj_list':obj_list,'allcount':allcount, 'assetdetail_list': assetdetail_list,'users_list':users_list,'recordtype_list':recordtype_list})
 
+
+#配置信息查询
+def Asset_Search(request,info_id):
+    try:
+        obj_list=AssetInfo.objects.filter(id=info_id)
+    except AssetInfo.DoesNotExist:
+        pass
+    allcount=AssetInfo.objects.all().count()
+    sel_list = AssetInfo.objects.all()
+    return render(request,'include/assetinfo/assetinfo.html',{'obj_list': obj_list, 'allcount': allcount,'sel_list':sel_list})
 
 @login_required
 def AssetDetailsSearchView(request):
@@ -156,7 +166,7 @@ def AssetDetailsSearchView(request):
 
 
     #obj_list=AssetDetails.objects.filter((Q(itno__contains=S)|Q(version__contains=S)|Q(where__engname__contains=S)),assettype__assettype__iexact=WT)
-    SQ=AssetDetails.objects.filter((Q(itno__contains=S)|Q(version__contains=S)|Q(where__engname__contains=S))&(Q(assettype__assettype__iexact=WT)&Q(brands__assetbrands__iexact=WB)&Q(status__assettatus__iexact=WS))).query
+    #SQ=AssetDetails.objects.filter((Q(itno__contains=S)|Q(version__contains=S)|Q(where__engname__contains=S))&(Q(assettype__assettype__iexact=WT)&Q(brands__assetbrands__iexact=WB)&Q(status__assettatus__iexact=WS))).query
     count=obj_list.count()
     allcount=AssetDetails.objects.all().count()
 

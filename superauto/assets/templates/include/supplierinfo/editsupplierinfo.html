@@ -1,0 +1,37 @@
+{% extends "./base.html" %}
+{% block content %}
+<div class="header">
+
+            <h1 class="page-title">供应商管理</h1>
+                    <ul class="breadcrumb">
+            <li><a href="/">首页</a> </li>
+            <li><a href="{% url 'supplier-view' %}">供应商信息</a> </li>
+            <li class="active">修改供应商信息</li>
+                      <input class="layui-btn layui-btn-mini" type="button" name="Submit" onclick="javascript:history.back(-1);" value="返回上一页">
+        </ul>
+
+        </div>
+    <div class="main-content">
+
+
+        <form action="" method="post">
+                {% csrf_token %}
+
+                <table>
+                    {{ form.media }}
+                {{ form }}
+                </table>
+
+
+
+<br><br><br>
+                <div class="btn-toolbar list-toolbar">
+      <button class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+
+    </div>
+
+
+                <div class="clearfix"></div>
+            </form>
+    </div>
+{% endblock %}

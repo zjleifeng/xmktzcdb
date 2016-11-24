@@ -1,17 +1,15 @@
 <div class="sidebar-nav">
     <ul>
-    <li><a href="#" data-target=".dashboard-menu" class="nav-header" data-toggle="collapse"><i class="fa fa-fw fa-dashboard"></i> 资产管理<i class="fa fa-collapse"></i></a></li>
+    <li><a href="#" data-target=".dashboard-menu" class="nav-header" data-toggle="collapse"><i class="glyphicon glyphicon-hdd"></i> 资产管理<i class="fa fa-collapse"></i></a></li>
     <li><ul class="dashboard-menu nav nav-list collapse in">
             <li><a href="{% url 'assetdetails-view' %}"><span class="fa fa-caret-right"></span> 资产列表</a></li>
             <li ><a href="{% url 'assetinfo-view' %}"><span class="fa fa-caret-right"></span> 详细信息</a></li>
             <li ><a href="{% url 'userecord-view' %}"><span class="fa fa-caret-right"></span> 使用记录</a></li>
-            <li ><a href="#"><span class="fa fa-caret-right"></span> 维护记录</a></li>
-            <li ><a href="#"><span class="fa fa-caret-right"></span> Calendar</a></li>
+            <li ><a href="{% url 'repairinfo-view' %}"><span class="fa fa-caret-right"></span> 维护记录</a></li>
     </ul></li>
 
-    <li data-popover="true" data-content="部门员工信息管理 <strong><a href='#' target='blank'>item</a><strong>." rel="popover" data-placement="right"><a href="#" data-target=".premium-menu" class="nav-header collapsed" data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 部门 员工管理<i class="fa fa-collapse"></i></a></li>
+    <li ><a href="#" data-target=".premium-menu" class="nav-header collapsed" data-toggle="collapse"><i class="glyphicon glyphicon-user"></i> 部门 员工管理<i class="fa fa-collapse"></i></a></li>
         <li><ul class="premium-menu nav nav-list collapse in">
-                <li class="visible-xs visible-sm"><a href="#">- Premium features require a license -</a></li>
             <li ><a href="{% url 'dept-view' %}"><span class="fa fa-caret-right"></span> 部门管理</a></li>
             <li ><a href="{% url 'updept-view' %}"><span class="fa fa-caret-right"></span> 上传部门信息</a></li>
             <li ><a href="{% url 'users-view' %}"><span class="fa fa-caret-right"></span> 员工管理</a></li>
@@ -22,31 +20,26 @@
 
 
 
-        <li><a href="#" data-target=".legal-menu" class="nav-header collapsed" data-toggle="collapse"><i class="fa fa-fw fa-legal"></i> 供应商信息<i class="fa fa-collapse"></i></a></li>
+        <li><a href="#" data-target=".legal-menu" class="nav-header collapsed" data-toggle="collapse"><i class="glyphicon glyphicon-briefcase"></i> 供应商信息<i class="fa fa-collapse"></i></a></li>
         <li><ul class="legal-menu nav nav-list collapse">
-            <li ><a href="#"><span class="fa fa-caret-right"></span> 供应商管理</a></li>
-            <li ><a href="#"><span class="fa fa-caret-right"></span> Terms and Conditions</a></li>
+            <li ><a href="{% url 'supplier-view' %}"><span class="fa fa-caret-right"></span> 供应商管理</a></li>
     </ul></li>
-          <li><a href="#" data-target=".up-menu" class="nav-header collapsed" data-toggle="collapse"><i class="fa fa-fw fa-comment"></i>上传数据管理<i class="fa fa-collapse"></i></a></li>
+          <li><a href="#" data-target=".up-menu" class="nav-header collapsed" data-toggle="collapse"><i class="glyphicon glyphicon-circle-arrow-up"></i>上传数据管理<i class="fa fa-collapse"></i></a></li>
         <li><ul class="up-menu nav nav-list collapse">
             <li ><a href="{% url 'updept-view' %}"><span class="fa fa-caret-right"></span>上传部门数据</a></li>
             <li ><a href="{% url 'upuser-view' %}"><span class="fa fa-caret-right"></span>上传员工数据</a></li>
             <li ><a href="{% url 'upassetdetails-view' %}"><span class="fa fa-caret-right"></span>上传资产列表数据</a></li>
             <li ><a href="{% url 'upassetinfo-view' %}"><span class="fa fa-caret-right"></span>上传资产详细数据</a></li>
+            <li ><a href="{% url 'upuserecord-view' %}"><span class="fa fa-caret-right"></span>上传资产使用记录</a></li>
+            <li ><a href="{% url 'upsupplier-view' %}"><span class="fa fa-caret-right"></span>上传供应商信息</a></li>
             </ul></li>
 
- <li><a href="#" data-target=".accounts-menu" class="nav-header collapsed" data-toggle="collapse"><i class="fa fa-fw fa-briefcase"></i> 管理员 <span class="label label-info">设置</span></a></li>
+ <li><a href="#" data-target=".accounts-menu" class="nav-header collapsed" data-toggle="collapse"><i class="glyphicon glyphicon-cog"></i> 管理员 <span class="label label-info">设置</span></a></li>
         <li><ul class="accounts-menu nav nav-list collapse">
             <li ><a href="#"><span class="fa fa-caret-right"></span>登录</a></li>
             <li ><a href="#"><span class="fa fa-caret-right"></span>注销</a></li>
             <li ><a href="#"><span class="fa fa-caret-right"></span> 修改密码</a></li>
             <li ><a href="/syscolor/"><span class="fa fa-caret-right"></span>风格设置</a></li>
     </ul></li>
-        <li><a href="#" class="nav-header"><i class="fa fa-fw fa-question-circle"></i> Help</a></li>
-            <li><a href="#" class="nav-header"><i class="fa fa-fw fa-comment"></i> Faq</a></li>
 
-
-    </ul></li>
-                <li><a href="#" class="nav-header" target="blank"><i class="fa fa-fw fa-heart"></i> Get Premium</a></li>
-            </ul>
     </div>

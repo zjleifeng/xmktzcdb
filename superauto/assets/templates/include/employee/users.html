@@ -72,7 +72,7 @@
         <th width="10%">分机号</th>
         <th width="10%">部门</th>
          <th width="20%">邮箱</th>
-         <th width="10%">手机</th>
+         <th width="15%">手机</th>
         <th width="10%">状态</th>
          <th width="10%">入职时间</th>
          <th>操作</th>
@@ -85,8 +85,8 @@
   {% if users_list %}
       {% for users in users_list %}
            <tr>
-      <td><a href="/users/{{ users.id }}"> {{ users.engname }}</a></td>
-      <td><a href="/users/{{ users.id }}"> {{ users.chnname }}</a></td>
+      <td><a title="点击修改此条信息" href="/users/{{ users.id }}"> {{ users.engname }}</a></td>
+      <td><a title="点击修改此条信息" href="/users/{{ users.id }}"> {{ users.chnname }}</a></td>
       <td> {{ users.extnum }}</td>
       <td> {{ users.dept }}</td>
       <td> {{ users.email }}</td>

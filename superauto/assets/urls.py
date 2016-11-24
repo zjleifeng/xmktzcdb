@@ -13,10 +13,35 @@ from assets.views import index
 from assets.dept import EditDept_detail
 from assets.users import UserSearchView
 from django.views.generic.base import RedirectView
+from django.contrib.auth import views as auth_views
 
 
 
 urlpatterns = [
+
+
+    url(r'^forgot-password/$',
+        views.forgot_password, name="forgot-password"),
+    url(r'^password/change/$',
+       auth_views.password_change,
+       name='password_change'),
+    url(r'^password/change/done/$',
+       auth_views.password_change_done,
+       name='password_change_done'),
+    url(r'^resetpassword/$',
+       auth_views.password_reset,
+       name='password_reset'),
+    url(r'^resetpassword/passwordsent/$',
+       auth_views.password_reset_done,
+       name='password_reset_done'),
+    url(r'^reset/done/$',
+       auth_views.password_reset_complete,
+       name='password_reset_complete'),
+    url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$',
+       auth_views.password_reset_confirm,
+       name='password_reset_confirm'),
+
+
 
     url(r'^$',index),
     url(r'^accounts/login/$', 'assets.account.userlogin', name="userlogin"),
@@ -62,15 +87,31 @@ urlpatterns = [
     url(r'^loadassetinfo/$', 'assets.assetinfo.LoadAssetinfoView',name='loadassetinfo-view'),
 
     url(r'^record/(\d+)/$', 'assets.assetdetails.Record_search', name='record-view'),#使用记录
+    url(r'^sassetinfo/(\d+)/$', 'assets.assetdetails.Asset_Search', name='sassetinfo-view'),#配置查询
 
     url(r'^userecord/$', 'assets.userecord.UseRecordView',name='userecord-view'),
     url(r'^userecordsearch/$', 'assets.userecord.UseRecordSearch',name='userecordsearch-view'),
     url(r'^adduserecord/$','assets.userecord.AddUseRecordView',name='adduserecord-view'),
-    url(r'^userecord/(\d+)/$','assets.userecord.EditUseRecordView',name='userecord-view'),
+    url(r'^userecord/(\d+)/$','assets.userecord.EditUseRecordView',name='edituserecord-view'),
     url(r'^deluserecord/(\d+)/$', 'assets.userecord.DelUseRecordView',name='deluserecord-view'),
     url(r'^upuserecord/$', 'assets.userecord.UpUseRecordView',name='upuserecord-view'),
     url(r'^loaduserecord/$', 'assets.userecord.LoadUseRecordView',name='loaduserecord-view'),
 
+    url(r'^repairinfo/$', 'assets.repairinfo.RepairInfoView',name='repairinfo-view'),
+    url(r'^repairinfosearch/$', 'assets.repairinfo.RepairInfoSearch',name='repairinfosearch-view'),
+    url(r'^addrepairinfo/$','assets.repairinfo.AddRepairInfoView',name='addrepairinfo-view'),
+    url(r'^repairinfo/(\d+)/$','assets.repairinfo.EditRepairInfoView',name='editrepairinfo-view'),
+    url(r'^delrepairinfo/(\d+)/$', 'assets.repairinfo.DelRepairInfoView',name='delrepairinfo-view'),
+    url(r'^uprepairinfo/$', 'assets.repairinfo.UpRepairInfoView',name='uprepairinfo-view'),
+    url(r'^loadrepairinfo/$', 'assets.repairinfo.LoadRepairInfoView',name='loadrepairinfo-view'),
+
+    url(r'^supplier/$', 'assets.supplierinfo.SupplierView', name='supplier-view'),
+    url(r'^suppliersearch/$', 'assets.supplierinfo.SupplierSearch', name='suppliersearch-view'),
+    url(r'^addsupplier/$', 'assets.supplierinfo.AddSupplierView', name='addsupplier-view'),
+    url(r'^supplier/(\d+)/$', 'assets.supplierinfo.EditSupplierView', name='editsupplier-view'),
+    url(r'^delsupplier/(\d+)/$', 'assets.supplierinfo.DelSupplierView', name='delsupplier-view'),
+    url(r'^upsupplier/$', 'assets.supplierinfo.UpSupplierView', name='upsupplier-view'),
+    url(r'^loadsupplier/$', 'assets.supplierinfo.LoadSupplierView', name='loadsupplier-view'),
 
 
 

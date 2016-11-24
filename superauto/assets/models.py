@@ -246,13 +246,15 @@ class UserRecord(models.Model):
 #维修信息
 class RepairInfo(models.Model):
     itno = models.ForeignKey(AssetDetails, verbose_name=u'IT资产编号')
-    start_time=models.DateTimeField(verbose_name=u'维护开始时间',auto_now=True)
-    end_time=models.DateTimeField(verbose_name=u'维护结束时间',auto_now=True,blank=True,null=True)
+    start_time=models.DateField(verbose_name=u'维护开始时间',blank=True,null=True)
+    end_time=models.DateField(verbose_name=u'维护结束时间',blank=True,null=True)
     repinfo=models.CharField(max_length=500,verbose_name=u'维护内容说明')
     issure=models.BooleanField(default=True,verbose_name=u'是否完成')
     whorep=models.CharField(max_length=200,blank=True,null=True,verbose_name=u'维护人员')
-    whophone=models.IntegerField(blank=True,null=True,verbose_name=u'维护人电话')
+    whophone=models.BigIntegerField(blank=True,null=True,verbose_name=u'维护人电话')
+    delstatus = models.IntegerField(default=0, verbose_name=u'删除状态(0:未删除,1:已删除不可显示)')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name=u'创建时间')
+
 
 
     class Meta:
@@ -267,12 +269,13 @@ class RepairInfo(models.Model):
 class SupplierInfo(models.Model):
     corporate_name=models.CharField(max_length=200,verbose_name=u'公司名称')
     corporate_adress=models.CharField(max_length=200,verbose_name=u'公司地址')
-    corporate_phone=models.IntegerField(verbose_name=u'公司电话',blank=True,null=True)
-    corporate_site=models.SlugField(blank=True,null=True,verbose_name=u'公司网站')
+    corporate_phone=models.BigIntegerField(verbose_name=u'公司电话',blank=True,null=True)
+    corporate_site=models.URLField(blank=True,null=True,verbose_name=u'公司网站')
     contect_name=models.CharField(max_length=200,verbose_name=u'联系人')
-    contect_phone=models.IntegerField(verbose_name=u'联系人电话')
+    contect_phone=models.BigIntegerField(verbose_name=u'联系人电话')
     contect_email=models.EmailField(blank=True,null=True,verbose_name=u'联系人邮箱')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name=u'创建时间')
+    delstatus = models.IntegerField(default=0, verbose_name=u'删除状态(0:未删除,1:已删除不可显示)')
 
     class Meta:
         verbose_name_plural='供应商信息'

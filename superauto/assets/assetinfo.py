@@ -33,9 +33,10 @@ from assets.models import AssetDetails,AssetType,AssetBrands,AssetStatus,Employe
 def AssetinfoView(request):
     assetinfo_list=AssetInfo.objects.all()
     obj_list=[]
-    for obj in assetinfo_list:
-        if obj.delstatus==0:
-            obj_list.append(obj)
+    if assetinfo_list:
+        for obj in assetinfo_list:
+            if obj.delstatus==0:
+                obj_list.append(obj)
 
     allcount=len(obj_list)
 
