@@ -30,7 +30,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
-# Application definition
+
 
 INSTALLED_APPS = (
     'suit',
@@ -147,3 +147,16 @@ WEBSITE_TITLE = u'XMKT资产管理系统'
 WEBSITE_WELCOME = u'XMKT Manager'
 
 PAGE_NUM=10
+
+
+# email配置
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.163.com'                       # SMTP地址 例如: smtp.163.com
+EMAIL_PORT = 25                       # SMTP端口 例如: 25
+EMAIL_HOST_USER = 'z_j_boy@163.com'                  # 我自己的邮箱 例如: xxxxxx@163.com
+EMAIL_HOST_PASSWORD = 'hello1105'              # 我的邮箱密码 例如  xxxxxxxxx
+EMAIL_SUBJECT_PREFIX = u'eric'       # 为邮件Subject-line前缀,默认是'[django]'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+

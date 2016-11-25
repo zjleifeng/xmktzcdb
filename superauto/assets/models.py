@@ -1,6 +1,7 @@
 #coding:utf-8
 from django.db import models
 
+
 # Create your models here.
 
 
@@ -38,6 +39,9 @@ CHANG={
     2:u'调拨外地',
     3:u'其他',
 }
+
+
+
 
 class UserStatus(models.Model):
     status=models.CharField(max_length=100,unique=True,verbose_name=u'当前员工状态')

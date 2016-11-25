@@ -14,9 +14,10 @@ from django.template import RequestContext
 from django.contrib.auth import authenticate,login as auth_login,logout as auth_logout
 
 def userlogin(request):
+    error=[]
     if request.method == 'GET':
         form = LoginForm()
-        return render_to_response('login.html', RequestContext(request, {'form': form, }))
+        return render_to_response('user_login.html', RequestContext(request, {'form': form, }))
     else:
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -27,7 +28,9 @@ def userlogin(request):
                 auth.login(request, user)
                 return render_to_response('index.html', RequestContext(request))
             else:
-                return render_to_response('login.html',
+
+                return render_to_response('user_login.html',
                                           RequestContext(request, {'form': form, 'password_is_wrong': True}))
         else:
-            return render_to_response('login.html', RequestContext(request, {'form': form, }))
+
+            return render_to_response('user_login.html', RequestContext(request, {'form': form,'password_is_None':True }))

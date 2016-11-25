@@ -36,10 +36,11 @@
 
  <li><a href="#" data-target=".accounts-menu" class="nav-header collapsed" data-toggle="collapse"><i class="glyphicon glyphicon-cog"></i> 管理员 <span class="label label-info">设置</span></a></li>
         <li><ul class="accounts-menu nav nav-list collapse">
-            <li ><a href="#"><span class="fa fa-caret-right"></span>登录</a></li>
-            <li ><a href="#"><span class="fa fa-caret-right"></span>注销</a></li>
-            <li ><a href="#"><span class="fa fa-caret-right"></span> 修改密码</a></li>
+
+            <li ><a href="{% url 'userlogout' %}"><span class="fa fa-caret-right"></span>注销</a></li>
+            <li ><a href="{% url 'changepwd' %}"><span class="fa fa-caret-right"></span> 修改密码</a></li>
+
             <li ><a href="/syscolor/"><span class="fa fa-caret-right"></span>风格设置</a></li>
     </ul></li>
-
-    </div>
+</ul>
+</div>

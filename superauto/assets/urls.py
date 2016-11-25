@@ -14,32 +14,12 @@ from assets.dept import EditDept_detail
 from assets.users import UserSearchView
 from django.views.generic.base import RedirectView
 from django.contrib.auth import views as auth_views
+from django.views.generic import TemplateView, DetailView
 
 
 
 urlpatterns = [
-
-
-    url(r'^forgot-password/$',
-        views.forgot_password, name="forgot-password"),
-    url(r'^password/change/$',
-       auth_views.password_change,
-       name='password_change'),
-    url(r'^password/change/done/$',
-       auth_views.password_change_done,
-       name='password_change_done'),
-    url(r'^resetpassword/$',
-       auth_views.password_reset,
-       name='password_reset'),
-    url(r'^resetpassword/passwordsent/$',
-       auth_views.password_reset_done,
-       name='password_reset_done'),
-    url(r'^reset/done/$',
-       auth_views.password_reset_complete,
-       name='password_reset_complete'),
-    url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$',
-       auth_views.password_reset_confirm,
-       name='password_reset_confirm'),
+    #(r'^accounts/', include('userena.urls')),
 
 
 
@@ -47,6 +27,15 @@ urlpatterns = [
     url(r'^accounts/login/$', 'assets.account.userlogin', name="userlogin"),
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout',
         {'next_page': '/accounts/login/'}, name="userlogout"),
+    url(r'^accounts/changepwd/$', 'assets.views.changepwd',name='changepwd'),
+
+    url(r'^forgetpassword/$','assets.views.forgetpassword',name='forgetpassword-view'),
+
+    url(r'^resetpassword/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$',
+            'assets.views.resetpassword',
+                name='resetpassword-view'),
+
+    #url(r'^usercontrol/(?P<slug>\w+)$', UserControl.as_view()),
     url(r'^syscolor/$', 'assets.views.syscolor'),
 
     url(r'^dept/$','assets.dept.DeptView',name='dept-view'),

@@ -6,6 +6,7 @@ from superauto import settings
 from django.views.generic import View, TemplateView, ListView, DetailView
 from django.db.models import Q
 from django.contrib import auth
+from django.contrib.auth.models import User
 from forms import LoginForm
 from django.template.context import RequestContext
 from django.contrib.auth.decorators import login_required
@@ -13,9 +14,13 @@ from django.http import HttpResponseRedirect,Http404
 from django.views.generic import View
 import superauto.settings
 from django.views.generic import View
-from assets.forms import AddDeptForm
+from assets.forms import AddDeptForm,ChangepwdForm,PasswordRestForm,SetPasswordForm
 from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import (base36_to_int, is_safe_url,
+                               urlsafe_base64_decode, urlsafe_base64_encode)
 
+from django.http import HttpResponse
 # Create your views here.
 
 
@@ -47,8 +52,90 @@ def logout(request):
     auth.logout(request)
     return HttpResponseRedirect("/accounts/login/")
 
-def forgot_password(request):
-    pass
+@login_required
+def changepwd(request):
+    if request.method=='GET':
+        form=ChangepwdForm()
+        return render_to_response('registration/changepwd.html',RequestContext(request, {'form': form,}))
+    else:
+        form=ChangepwdForm(request.POST)
+        if form.is_valid():
+            username=request.user.username
+            oldpwd=request.POST.get('oldpassword','')
+            user=auth.authenticate(username=username,password=oldpwd)
+            if user is not None and user.is_active:
+                newpwd=request.POST.get('newpassword1','')
+                user.set_password(newpwd)
+                user.save()
+                return render_to_response('index.html',RequestContext(request,{'changepwd_success':True}))
+            else:
+                return render_to_response('registration/changepwd.html',
+                                          RequestContext(request, {'form': form, 'oldpassword_is_wrong': True}))
+        else:
+            return render_to_response('registration/changepwd.html', RequestContext(request, {'form': form, }))
+
+
+def forgetpassword(request):
+    if request.method=='GET':
+        form=PasswordRestForm()
+        return render_to_response('registration/forgot_password.html',RequestContext(request, {'form': form,}))
+    else:
+        form = PasswordRestForm(request.POST)
+
+        if form.is_valid():
+            token_generator = default_token_generator
+            from_email = None
+            opts = {
+                'token_generator': token_generator,
+                'from_email': from_email,
+                'request': request,
+            }
+            user = form.save(**opts)
+            return render_to_response('user_login.html', RequestContext(request, {'success':True }))
+        else:
+            return render_to_response('registration/forgot_password.html', RequestContext(request, {'form': form, }))
+
+
+def resetpassword(request,uidb64,token):
+    uidb64 = uidb64
+    token = token
+    if request.method=='GET':
+        form=SetPasswordForm()
+        return render_to_response('registration/resetpassword.html',RequestContext(request,{'form':form}))
+    else:
+        form=SetPasswordForm(request.POST)
+
+
+        if form.is_valid():
+
+
+
+
+            try:
+                uid = urlsafe_base64_decode(uidb64)
+                user = User._default_manager.get(pk=uid)
+            except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+                user = None
+
+            token_generator = default_token_generator
+
+            if user is not None and token_generator.check_token(user, token):
+                newpwd = request.POST.get('newpassword1', '')
+                user.set_password(newpwd)
+                user.save()
+
+                return HttpResponse(u'修改成功哦！')
+
+
+
+            else:
+                return HttpResponse(
+                    u"密码重设失败!\n密码重置链接无效，可能是因为它已使用。可以请求一次新的密码重置.",
+                    status=403
+                )
+        else:
+            return render_to_response('registration/resetpassword.html', RequestContext(request, {'form': form}))
+
 
 """
 website_title=settings.WEBSITE_TITLE
