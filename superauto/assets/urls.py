@@ -15,7 +15,7 @@ from assets.users import UserSearchView
 from django.views.generic.base import RedirectView
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView, DetailView
-
+from assets.assetdetails import AssetDetailsView
 
 
 urlpatterns = [
@@ -57,7 +57,7 @@ urlpatterns = [
     url(r'^upuser/$', 'assets.users.UpUser',name='upuser-view'),
     url(r'^loaduser/$', 'assets.users.LoadUser',name='loaduser-view'),
 
-    url(r'^assetdetails/$', 'assets.assetdetails.AssetDetailsView',name='assetdetails-view'),
+    url(r'^assetdetails/$',AssetDetailsView.as_view() ,name='assetdetails-view'),
     url(r'^assetdetailssearch/$', 'assets.assetdetails.AssetDetailsSearchView',name='assetdetailssearch-view'),
     url(r'^addassetdetails/$','assets.assetdetails.AddAssetDetailsView',name='addassetdetails-view'),
     #url(r'^edituser/$','assets.users.EditUser',name='edituser-view'),

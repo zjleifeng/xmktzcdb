@@ -28,10 +28,88 @@ import time
 import datetime
 from forms import AddAssetDetailsForm
 from assets.models import AssetDetails,AssetType,AssetBrands,AssetStatus,EmployeeUser,UserRecord,RecordStatus,AssetInfo
+from django.views.generic import View, TemplateView, ListView, DetailView
+from django import template
+from django.template import Context, loader
+import json
 
+from assets.page_paginator import XmktPaginator
+
+
+def get_pageinatior(obj_list):
+    # context = super(BaseMixin, self).get_pageinatior(**kwargs)
+    paginate_by = settings.PAGE_NUM
+    paginator = Paginator(obj_list, paginate_by)
+    page = 2
+    try:
+        obj_list = paginator.page(page)
+    except PageNotAnInteger:
+        obj_list = paginator.page(1)
+    except EmptyPage:
+        obj_list = paginator.page(paginator.num_pages)
+
+    return obj_list
+
+
+class BaseMixin(object):
+    def get_context_data(self,*args,**kwargs):
+        context=super(BaseMixin,self).get_context_data(**kwargs)
+        try:
+            if self.request.META.has_key('HTTP_X_FORWARDED_FOR'):
+                ip = self.request.META['HTTP_X_FORWARDED_FOR']
+            else:
+                ip = self.request.META['REMOTE_ADDR']
+            context['ip_adress'] = ip
+        except Exception as e:
+            pass
+        return context
+
+
+
+
+
+
+class AssetDetailsView(BaseMixin,ListView):
+    template_name = 'include/assetdetails/assetdetails.html'
+    context_object_name = 'obj_list'
+
+
+    def get_context_data(self,**kwargs):
+        kwargs['assettype_list']=AssetType.objects.all()
+        kwargs['assetbrand_list']=AssetBrands.objects.all()
+        kwargs['assetstatus_list']=AssetStatus.objects.all()
+
+        return super(AssetDetailsView,self).get_context_data(**kwargs)
+
+
+    def get_queryset(self):
+        obj_list=AssetDetails.objects.filter(delstatus=0)
+        get_pageinatior(obj_list)
+
+        return obj_list
+
+    def get_pageinatior(self,**kwargs):
+        kwargs['obj_list'] = AssetDetails.objects.filter(delstatus=0)
+        return super(AssetDetailsView,self).get_pageinatior(**kwargs)
+
+    def post(self,request,*args,**kwargs):
+        obj_list=AssetDetails.objects.filter(delstatus=0)
+
+        html=''
+        for asset in obj_list:
+            html += template.loader.get_template(
+                        'include/assetdetails/all_details'
+                    ).render(template.Context({'post': asset}))
+
+        mydict = {"html": html}
+        return HttpResponse(
+            json.dumps(mydict),
+            content_type="application/json"
+        )
 
 @login_required
-def AssetDetailsView(request):
+def AssetDetailsView1(request):
+
     assetdetails_list=AssetDetails.objects.all().order_by('itno')
 
     type(assetdetails_list)
@@ -40,7 +118,10 @@ def AssetDetailsView(request):
     if assetdetails_list:
         for obj in assetdetails_list:
             if obj.delstatus==0:
-                count_list.append(UserRecord.objects.filter(Q(itno__itno__contains=obj.itno)).count())
+                count_list.append(UserRecord.objects.filter(Q(itno__itno__iexact=obj.itno)).count())
+                b = AssetDetails.objects.get(itno=obj.itno)
+                xx=b.userrecord_set.all().count()
+
                 obj_list.append(obj)
 
 
@@ -48,6 +129,8 @@ def AssetDetailsView(request):
     assettype_list=AssetType.objects.all()
     assetbrand_list=AssetBrands.objects.all()
     assetstatus_list=AssetStatus.objects.all()
+
+    xxx=UserRecord.itno.itno_set.all()
 
     paginate_by=settings.PAGE_NUM
     paginator=Paginator(obj_list,paginate_by)
@@ -65,7 +148,7 @@ def AssetDetailsView(request):
 def Record_search(request,itno_id):
     assetid=AssetDetails.objects.get(id=itno_id)
     itno=assetid.itno
-    record_list=UserRecord.objects.filter(Q(itno__itno__contains=itno))
+    record_list=UserRecord.objects.filter(Q(itno__itno__iexact=itno))
 
     assetdetail_list = AssetDetails.objects.all()
     users_list = EmployeeUser.objects.all()

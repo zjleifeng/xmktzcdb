@@ -1,0 +1,50 @@
+ <tr>
+      <td><a href="/assetdetails/{{ obj.id }}" title="点击修改此条信息"> {{ obj.itno }}</a></td>
+      <td>{{ obj.financeno }}</td>
+      <td> {% if obj.assettype %}{{ obj.assettype }}{% else %}{{ '' }}{% endif %}</td>
+      <td> {% if obj.brands %}{{ obj.brands }}{% else %}{{ '' }}{% endif %}</td>
+      <td> {% if obj.version %}{{ obj.version }}{% else %}{{ '' }}{% endif %}</td>
+      <td> {% if obj.status %}{{ obj.status }}{% else %}{{ '' }}{% endif %}</td>
+      <td>{% if not obj.where %}<a style="color: red">IT保存</a>{% else %}{{ obj.where }}{% endif %}</td>
+
+
+        <td>{% if obj.configinfo %}<a title="查看配置信息" href="/sassetinfo/{{ obj.configinfo.id }}/">{{ obj.configinfo }}</a>{% else %}<a  href="/assetdetails/{{ obj.id }}/"><i class="layui-icon" title="添加配置信息" style="font-size: 20px; color: #1E9FFF;">&#xe61f; </i></a>{% endif %}</td>
+
+         <td><a style="float: right"  href="/record/{{ obj.id }}"><i class="fa btn btn-info">{{ obj.userrecord_set.all|length }}使用记录</i></a></td>
+
+
+      <td>
+          <a title="修改" href="/assetdetails/{{ obj.id }}/"><i class="fa fa-pencil"></i></a>&nbsp;
+
+    <a title="删除" href="#delModal{{ obj.id }}" role="button" data-toggle="modal"><i class="fa fa-trash-o"></i></a>
+
+
+    <div class="modal small fade" id="delModal{{ obj.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+<form id="delmodelform{{ obj.id }}" method="post" action="/delassetdetails/{{ obj.id }}/" >
+ {% csrf_token %}
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <a style="color:red;font-size: x-large">删除资产</a>
+        </div>
+
+        <div class="modal-body">
+            <p class="error-text"><i class="fa fa-warning modal-icon"></i>您确定要删除资产  <a style="color: red">{{ obj.itno }}</a><br>如要恢复请登录管理员后台操作</p>
+        </div>
+
+        <div class="modal-footer">
+            <button  class="btn btn-danger" data-dismiss="modal" onclick="submitForm('{{ obj.id }}');">Delete</button>
+            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cancel</button>
+
+        </div>
+      </div>
+    </div>
+</form>
+</div>
+
+
+      </td>
+    </tr>
