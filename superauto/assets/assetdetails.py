@@ -8,6 +8,7 @@
 
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from superauto import settings
 from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 from django.shortcuts import render,render_to_response
@@ -33,73 +34,75 @@ from django import template
 from django.template import Context, loader
 import json
 
+
+from functools import wraps
+from flask import Flask
 from assets.page_paginator import XmktPaginator
 
 
-def get_pageinatior(obj_list):
-    # context = super(BaseMixin, self).get_pageinatior(**kwargs)
-    paginate_by = settings.PAGE_NUM
-    paginator = Paginator(obj_list, paginate_by)
-    page = 2
-    try:
-        obj_list = paginator.page(page)
-    except PageNotAnInteger:
-        obj_list = paginator.page(1)
-    except EmptyPage:
-        obj_list = paginator.page(paginator.num_pages)
+def get_pageinatior(func):
+    def page_pageinatior(*args, **kwargs):
+        reg = func(*args, **kwargs)
+        paginate_by = settings.PAGE_NUM
+        paginator = Paginator(reg[1], paginate_by)
+        page = reg[0].request.GET.get('page')
 
-    return obj_list
+        try:
+            reg = paginator.page(page)
+        except PageNotAnInteger:
+            reg = paginator.page(1)
+        except EmptyPage:
+            reg = paginator.page(paginator.num_pages)
+
+        return reg
+
+    return page_pageinatior
 
 
 class BaseMixin(object):
+
+
     def get_context_data(self,*args,**kwargs):
-        context=super(BaseMixin,self).get_context_data(**kwargs)
+        context=super(BaseMixin,self).get_context_data(*args,**kwargs)
         try:
             if self.request.META.has_key('HTTP_X_FORWARDED_FOR'):
                 ip = self.request.META['HTTP_X_FORWARDED_FOR']
             else:
                 ip = self.request.META['REMOTE_ADDR']
             context['ip_adress'] = ip
+
         except Exception as e:
             pass
+
         return context
-
-
-
-
-
 
 class AssetDetailsView(BaseMixin,ListView):
     template_name = 'include/assetdetails/assetdetails.html'
     context_object_name = 'obj_list'
 
-
-    def get_context_data(self,**kwargs):
+    #@method_decorator(login_required)
+    def get_context_data(self,*args,**kwargs):
         kwargs['assettype_list']=AssetType.objects.all()
         kwargs['assetbrand_list']=AssetBrands.objects.all()
         kwargs['assetstatus_list']=AssetStatus.objects.all()
 
-        return super(AssetDetailsView,self).get_context_data(**kwargs)
+        return super(AssetDetailsView,self).get_context_data( *args,**kwargs)
 
-
+    @get_pageinatior
     def get_queryset(self):
         obj_list=AssetDetails.objects.filter(delstatus=0)
-        get_pageinatior(obj_list)
 
-        return obj_list
+        return self,obj_list
 
-    def get_pageinatior(self,**kwargs):
-        kwargs['obj_list'] = AssetDetails.objects.filter(delstatus=0)
-        return super(AssetDetailsView,self).get_pageinatior(**kwargs)
+    """
+    def post(self, request, *args, **kwargs):
+        obj_list = AssetDetails.objects.filter(delstatus=0)
 
-    def post(self,request,*args,**kwargs):
-        obj_list=AssetDetails.objects.filter(delstatus=0)
-
-        html=''
+        html = ''
         for asset in obj_list:
             html += template.loader.get_template(
-                        'include/assetdetails/all_details'
-                    ).render(template.Context({'post': asset}))
+                'include/assetdetails/all_details'
+            ).render(template.Context({'post': asset}))
 
         mydict = {"html": html}
         return HttpResponse(
@@ -142,7 +145,7 @@ def AssetDetailsView1(request):
     except EmptyPage:
         obj_list=paginator.page(paginator.num_pages)
     return render(request,'include/assetdetails/assetdetails.html',{'obj_list':obj_list,'allcount':allcount,'assettype_list':assettype_list,'assetbrand_list':assetbrand_list,'assetstatus_list':assetstatus_list})
-
+"""
 #使用记录查询
 @login_required
 def Record_search(request,itno_id):
@@ -250,6 +253,7 @@ def AssetDetailsSearchView(request):
 
     #obj_list=AssetDetails.objects.filter((Q(itno__contains=S)|Q(version__contains=S)|Q(where__engname__contains=S)),assettype__assettype__iexact=WT)
     #SQ=AssetDetails.objects.filter((Q(itno__contains=S)|Q(version__contains=S)|Q(where__engname__contains=S))&(Q(assettype__assettype__iexact=WT)&Q(brands__assetbrands__iexact=WB)&Q(status__assettatus__iexact=WS))).query
+
     count=obj_list.count()
     allcount=AssetDetails.objects.all().count()
 

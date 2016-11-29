@@ -15,8 +15,8 @@ from assets.users import UserSearchView
 from django.views.generic.base import RedirectView
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView, DetailView
-from assets.assetdetails import AssetDetailsView
-
+from assets.assetdetails import AssetDetailsView,Record_search
+from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     #(r'^accounts/', include('userena.urls')),
@@ -57,7 +57,8 @@ urlpatterns = [
     url(r'^upuser/$', 'assets.users.UpUser',name='upuser-view'),
     url(r'^loaduser/$', 'assets.users.LoadUser',name='loaduser-view'),
 
-    url(r'^assetdetails/$',AssetDetailsView.as_view() ,name='assetdetails-view'),
+    #url(r'^assetdetails/$',AssetDetailsView.as_view() ,name='assetdetails-view'),
+    url(r'^assetdetails/$',login_required(AssetDetailsView.as_view()),name='assetdetails-view'),
     url(r'^assetdetailssearch/$', 'assets.assetdetails.AssetDetailsSearchView',name='assetdetailssearch-view'),
     url(r'^addassetdetails/$','assets.assetdetails.AddAssetDetailsView',name='addassetdetails-view'),
     #url(r'^edituser/$','assets.users.EditUser',name='edituser-view'),
@@ -75,6 +76,9 @@ urlpatterns = [
     url(r'^upassetinfo/$', 'assets.assetinfo.UpAssetinfoView',name='upassetinfo-view'),
     url(r'^loadassetinfo/$', 'assets.assetinfo.LoadAssetinfoView',name='loadassetinfo-view'),
 
+
+    #url(r'^record/(?P<slug>\w+).html$',
+            #Record_search.as_view(), name='record-view'),
     url(r'^record/(\d+)/$', 'assets.assetdetails.Record_search', name='record-view'),#使用记录
     url(r'^sassetinfo/(\d+)/$', 'assets.assetdetails.Asset_Search', name='sassetinfo-view'),#配置查询
 

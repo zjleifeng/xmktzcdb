@@ -56,7 +56,7 @@
 
  <button class="btn btn-primary" >搜 索</button>
      {% if count %}
-     一共搜索到 <a style="color: red">{{ count }}</a> 条记录 |  {% endif %}共<a style="color: red"> {{ obj_list.count }} </a>条
+     一共搜索到 <a style="color: red">{{ count }}</a> 条记录 |  {% endif %}共<a style="color: red"> {{ obj_list|length}} </a>条
 
 </form>
 <div style="float: right">

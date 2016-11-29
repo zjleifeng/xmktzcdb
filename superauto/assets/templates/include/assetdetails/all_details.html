@@ -1,4 +1,5 @@
- <tr>
+{% url 'record-view' obj.id as record-view_url %}
+<tr>
       <td><a href="/assetdetails/{{ obj.id }}" title="点击修改此条信息"> {{ obj.itno }}</a></td>
       <td>{{ obj.financeno }}</td>
       <td> {% if obj.assettype %}{{ obj.assettype }}{% else %}{{ '' }}{% endif %}</td>
